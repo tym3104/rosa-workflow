@@ -876,9 +876,9 @@ function manualHtml(){
  h+='<div style="border:1px solid var(--line);border-radius:8px;padding:12px;margin-bottom:12px"><b class="small">0. 案件をつくる</b><div class="small" style="margin-top:4px;color:#475569">「新規案件」を押し、案件名（依頼の一言）・依頼者・締切・依頼内容メモを入力。<b>案件情報は「ロ」ページでのみ編集可能</b>（他ステップでは保護のためロック表示）。</div></div>';
  h+='<ol style="padding-left:20px;line-height:1.7;margin:0">';
  h+='<li class="small mb2"><b>ロ（論点）</b>：最終的に答えるべき問いを<b>一文の“問い”</b>で記入。<br><span style="color:#475569">→進む条件：セルフチェック3つ（①問いの形になっている ②依頼者のゴールと一致 ③一文で言える）を<b>すべてON</b>。</span></li>';
- h+='<li class="small mb2"><b>サ（サブ論点）</b>：論点をMECEに分解。「サブサブ論点を追加」でさらに階層化できます。<br><span style="color:#475569">→進む条件：サブ論点を<b>1つ以上</b>入力し、<b>「依頼者と合意した」にチェック</b>。</span></li>';
+ h+='<li class="small mb2"><b>サ（サブ論点）</b>：論点をMECEに分解。「サブサブ論点を追加」でさらに階層化できます。<b>「テキストで一括編集」</b>（書き出し→編集→読み込み）でまとめて入力も可：先頭<b>「# 」で論点</b>、1行＝1サブ論点、行頭に<b>スペース2つ＋「- 」でサブサブ論点</b>。<br><span style="color:#475569">→進む条件：サブ論点を<b>1つ以上</b>入力し、<b>「依頼者と合意した」にチェック</b>。</span></li>';
  h+='</ol><div class="manualdiv"></div><ol start="3" style="padding-left:20px;line-height:1.7;margin:0">';
- h+='<li class="small mb2"><b>T（TASK）</b>：上の<b>サブ論点一覧でチェック</b>→<b>タスク名を入力して「タスクを追加」</b>（1タスクで複数サブ論点もOK）。作成したタスクは下の<b>タスク一覧</b>に並び、各サブ論点には紐づく<b>T番号タグ</b>（未割当は赤）が表示されます。一覧の<b>「編集」</b>で紐付けを付け直せます。<br><span style="color:#475569">→進む条件：タスクが1つ以上あり、<b>すべてのサブ論点にタスクが割り当て済み</b>。</span></li>';
+ h+='<li class="small mb2"><b>T（TASK）</b>：上の<b>サブ論点一覧でチェック</b>→<b>タスク名を入力して「タスクを追加」</b>（1タスクで複数サブ論点もOK）。作成したタスクは下の<b>タスク一覧</b>に並び、各サブ論点には紐づく<b>T番号タグ</b>（未割当は赤）が表示されます。一覧の<b>「編集」</b>で紐付けを付け直せます。※サブサブ論点を持つサブ論点は紐付け対象外（その<b>サブサブ論点側に紐付け</b>）。<br><span style="color:#475569">→進む条件：タスクが1つ以上あり、<b>すべてのサブ論点にタスクが割り当て済み</b>。</span></li>';
  h+='<li class="small mb2"><b>ス（スケジュール）</b>：各タスクに担当・開始/終了日・見積時間(h)を入力。<b>「先行タスク」</b>は<b>「先行タスクを追加」→検索（部分一致）して選択→「追加」</b>で複数指定でき、このタスクの開始日が各先行タスクの終了日の翌日以降に自動制御されます。「締切から自動設定」で全日程を一括計算も可。担当フィルタ・ガント・合計見積時間も表示。<br><span style="color:#475569">→注意：終了日が開始日より前、または締切より後だと警告（その状態では次へ進めません）。</span></li>';
  h+='<li class="small mb2"><b>作（作業）</b>：タスクごとに<b>作業結果</b>をテキストで記入。<b>作業結果を入力</b>すると「完了にする」が押せます。<br><span style="color:#475569">→進む条件：<b>すべてのタスクを完了</b>に。</span></li>';
  h+='<li class="small mb2"><b>ア（アウトプット）</b>：あくまで通過点。<b>「Copilot活用」</b>で、論点〜作業（結果）を結合した<b>たたき台プロンプト</b>と<b>スライド用画像生成プロンプト</b>を取得→結果を「一言」「構成・ストーリーライン」に貼り戻し。<br><span style="color:#475569">→進む条件：チェック（「考える/描くを分けた」）をON。</span></li>';
@@ -890,6 +890,7 @@ function manualHtml(){
  h+='<li><b>書き出し／読み込み</b>（右上）：全案件をJSONでバックアップ・復元。</li>';
  h+='<li>各カードの<b>ゴミ箱アイコン</b>で案件・サブ論点・タスクを削除。</li>';
  h+='<li><b>操作マニュアル</b>（右上）：このページをいつでも表示できます。</li>';
+ h+='<li><b>出典・参考書籍</b>：一覧画面の「出典」ボタン、または下のボタンから参考書籍を確認できます。</li>';
  h+='</ul></div>';
  h+='<div style="border-top:1px solid var(--line);margin-top:12px;padding-top:10px" class="row between center wrapf gap2"><span class="small" style="color:#475569">本アプリの考え方の<b>出典・参考書籍</b>はこちら。</span><button class="btn btn-outline btn-sm" data-click="sources">'+ic('book',14)+'<span>出典・参考書籍を見る</span></button></div>';
  return h;
