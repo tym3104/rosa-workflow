@@ -720,8 +720,8 @@ function stepWork(c){
   h+='<p class="xsmall muted mb2">作業結果</p>';
   h+='<textarea class="inp" rows="4" data-act="taskResult" data-id="'+t.id+'" placeholder="5W1Hを明確に作業結果を入力する" style="width:100%;line-height:1.6;resize:vertical">'+esc(t.result||"")+'</textarea>';
   h+='<div class="mt3 row gap2" style="padding-top:12px;border-top:1px solid #f1f5f9;justify-content:flex-end">';
-  h+='<span class="xsmall" id="whint-'+t.id+'" style="color:'+(t.done?'#059669':(ready?'#64748b':ACCENT))+'">'+(t.done?"完了済み":(ready?"完了にできます":"作業結果を入力してください"))+'</span>';
-  h+='<button id="wdone-'+t.id+'" class="btn '+(t.done?'btn-line':(ready?'btn-brand':'btn-line'))+'" '+((!t.done&&!ready)?'disabled':'')+' data-click="workDone" data-id="'+t.id+'">'+(t.done?ic('circleChk',15)+'<span>完了済み（取消）</span>':ic('circle',15)+'<span>完了にする</span>')+'</button>';
+  var doneLbl=t.done?'完了済み（取消）':(ready?'完了にする':'作業結果未入力');
+  h+='<button id="wdone-'+t.id+'" class="btn '+(t.done?'btn-line':(ready?'btn-brand':'btn-line'))+'" '+((!t.done&&!ready)?'disabled':'')+' data-click="workDone" data-id="'+t.id+'">'+ic(t.done?'circleChk':'circle',15)+'<span id="wdonetxt-'+t.id+'">'+doneLbl+'</span></button>';
   h+='</div></div>';
  });
  h+='</div>';return h;
@@ -967,10 +967,10 @@ function autoSchedule(){
 function refreshWork(c,tid){
  var t=findTask(c,tid);if(!t)return;
  var ready=!!((t.result||'').trim());
- var hint=document.getElementById('whint-'+tid);
  var btn=document.getElementById('wdone-'+tid);
- if(hint){hint.style.color=t.done?'#059669':(ready?'#64748b':ACCENT);hint.textContent=t.done?'完了済み':(ready?'完了にできます':'作業結果を入力してください');}
- if(btn){btn.disabled=(!t.done&&!ready);}
+ var txt=document.getElementById('wdonetxt-'+tid);
+ if(txt)txt.textContent=t.done?'完了済み（取消）':(ready?'完了にする':'作業結果未入力');
+ if(btn){btn.disabled=(!t.done&&!ready);btn.className='btn '+(t.done?'btn-line':(ready?'btn-brand':'btn-line'));}
 }
 function canAdvance(c){
  var k=STEPS[c.currentStep].key;
