@@ -146,7 +146,7 @@ var URGENT_BIZ_DAYS=3; // 締切までの残り営業日がこれ以下なら「
 var GRAPH_CONFIG={clientId:"",tenant:"common",scopes:["User.Read","Calendars.ReadWrite"]};
 var LLMCFG_KEY="rosatsusakua_llm_v1";
 var LLM_CONFIG={enabled:false,apiKey:"",model:"claude-opus-4-8"};
-var _showDone=false,_msal=null,_acct=null,_subText='',_researchFilter=false;
+var _showDone=false,_msal=null,_acct=null,_subText='',_researchFilter=false,_subEditorOpen=false;
 var _llmTaps=0,_llmTapTimer=null,_llmDraft="",_llmDraftDeadline="",_llmBusy=false;
 var DAY=86400000;
 /* 日本の祝日（自動スケジュール用・2026〜2030。土日は別途除外）。必要に応じて追記可 */
@@ -311,8 +311,8 @@ function sampleCase(){
 function flattenSubs(sub){var out=[];(sub||[]).forEach(function(s,i){var kids=(s.children||[]).filter(function(c){return (c.text||'').trim();});out.push({id:s.id,text:s.text,level:1,tag:"サ"+(i+1),hasKids:kids.length>0,linkable:kids.length===0});(s.children||[]).forEach(function(c,j){out.push({id:c.id,text:c.text,level:2,tag:"サ"+(i+1)+"-"+(j+1),hasKids:false,linkable:true});});});return out;}
 function isResearch(c){return !!(c&&c.isResearchTask);}
 // サブ論点 ⇔ テキスト（1行=1サブ論点／行頭スペース2つ＋「- 」でサブサブ論点）
-function buildSubText(c){var lines=[];(c.subRonten||[]).forEach(function(s){lines.push('- '+(s.text||''));(s.children||[]).forEach(function(ch){lines.push('  - '+(ch.text||''));});});return lines.join('\n');}
-function parseSubText(txt){var subs=[],cur=null;String(txt==null?'':txt).split(/\r?\n/).forEach(function(raw){if(!raw.trim())return;var indent=(raw.match(/^[\t ]*/)[0]).replace(/\t/g,'  ').length;var text=raw.replace(/^[\t ]+/,'').replace(/^[-*・•]\s*/,'').trim();if(!text)return;if(indent>=2&&cur){cur.children.push({id:uid(),text:text});}else{cur={id:uid(),text:text,children:[]};subs.push(cur);}});return subs;}
+function buildSubText(c){var lines=[];var r=((c.ronten&&c.ronten.text)||'').trim();if(r)lines.push('# '+r);(c.subRonten||[]).forEach(function(s){lines.push('- '+(s.text||''));(s.children||[]).forEach(function(ch){lines.push('  - '+(ch.text||''));});});return lines.join('\n');}
+function parseSubText(txt){var subs=[],cur=null,ronten=null;String(txt==null?'':txt).split(/\r?\n/).forEach(function(raw){if(!raw.trim())return;var hm=raw.match(/^\s*#\s*(.*)$/);if(hm){if(ronten===null){var rt=hm[1].trim();if(rt)ronten=rt;}return;}var indent=(raw.match(/^[\t ]*/)[0]).replace(/\t/g,'  ').length;var text=raw.replace(/^[\t ]+/,'').replace(/^[-*・•]\s*/,'').trim();if(!text)return;if(indent>=2&&cur){cur.children.push({id:uid(),text:text});}else{cur={id:uid(),text:text,children:[]};subs.push(cur);}});return {ronten:ronten,subs:subs};}
 function getLinks(t){return (t.linkIds&&t.linkIds.length)?t.linkIds:(t.linkId?[t.linkId]:[]);}
 function getPreds(t){return (t.predecessorIds&&t.predecessorIds.length)?t.predecessorIds:(t.predecessorId?[t.predecessorId]:[]);}
 function normalizeSchedule(list){var arr=list.map(function(t){var o={};for(var k in t)o[k]=t[k];return o;});var byId={};arr.forEach(function(t){byId[t.id]=t;});for(var pass=0;pass<=arr.length;pass++){var ch=false;arr.forEach(function(t){var preds=getPreds(t);if(preds.length){var minS=null;preds.forEach(function(pid){var pr=byId[pid];if(pr){var pe=parseDate(pr.end);if(pe){var cand=addDays(pe,1);if(!minS||cand>minS)minS=cand;}}});if(minS){var ts=parseDate(t.start);if(!ts||ts<minS){t.start=fmtISO(minS);ch=true;}}}});if(!ch)break;}return arr;}
@@ -564,9 +564,14 @@ function stepSub(c){
  });
  h+='</div><button class="dash mt3" data-click="addSub">'+ic('plus',15)+'<span>サブ論点を追加</span></button>';
  h+='<div class="mt4" style="padding-top:14px;border-top:1px dashed var(--line)">';
- h+='<div class="xsmall muted mb2">サブ論点をまとめてテキストで編集（「書き出し」→ 編集 →「読み込み」で反映）。1行＝1サブ論点、行頭にスペース2つ＋「- 」でサブサブ論点。</div>';
- h+='<textarea id="subtextin" class="inp" data-act="subText" rows="5" placeholder="例：&#10;- 製造業への賭けは堅いか&#10;  - 法改正需要は一過性か持続的か&#10;  - 競合・市場規模はどうか&#10;- 量で伸びているか、単価込みで伸びているか" style="width:100%;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;line-height:1.6;resize:vertical">'+esc(_subText)+'</textarea>';
- h+='<div class="row gap2 mt2"><button class="btn btn-line btn-sm" data-click="exportSub">'+ic('dl',13)+'<span>書き出し</span></button><button class="btn btn-line btn-sm" data-click="importSub">'+ic('ul',13)+'<span>読み込み</span></button></div>';
+ h+='<div class="row between gap2" data-click="subEditorToggle" style="cursor:pointer;padding:4px 0"><span class="small bold" style="color:#334155">テキストで一括編集（書き出し／読み込み）</span><span style="flex:0 0 auto;color:var(--mut2)">'+ic(_subEditorOpen?'up':'down',16)+'</span></div>';
+ if(_subEditorOpen){
+  h+='<div class="mt2">';
+  h+='<div class="row gap2 mb2"><button class="btn btn-line btn-sm" data-click="exportSub">'+ic('dl',13)+'<span>書き出し</span></button><button class="btn btn-line btn-sm" data-click="importSub">'+ic('ul',13)+'<span>読み込み</span></button></div>';
+  h+='<div class="xsmall muted mb2">論点・サブ論点・サブサブ論点をまとめてテキストで編集（「書き出し」→ 編集 →「読み込み」で反映）。先頭「# 」で論点、1行＝1サブ論点、行頭にスペース2つ＋「- 」でサブサブ論点。</div>';
+  h+='<textarea id="subtextin" class="inp" data-act="subText" rows="5" placeholder="例：&#10;# 製造業に賭けるべきか？（論点）&#10;- 製造業への賭けは堅いか&#10;  - 法改正需要は一過性か持続的か&#10;  - 競合・市場規模はどうか&#10;- 量で伸びているか、単価込みで伸びているか" style="width:100%;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;line-height:1.6;resize:vertical">'+esc(_subText)+'</textarea>';
+  h+='</div>';
+ }
  h+='</div>';
  h+='<div class="mt4" style="padding-top:16px;border-top:1px solid #f1f5f9"><div class="banner banner-accent mb3">'+ic('alert',16)+'<span><b>サブ論点を詰めずに TASK へ進まない。</b>「何を解くか」を固め、<b>依頼者と内容を合意</b>してから次（T）へ。</span></div>';
  h+=toggleHtml("subAgree",!!c.subAgreed,"依頼者とサブ論点の内容について合意を得た")+'</div>';
@@ -665,6 +670,8 @@ function gantt(tasks){
 }
 function mentOk(t){var m=t.mentality||{};return !!(m.thinkFirst&&m.surprise&&m.thorough);}
 function factOk(t){return (t.materials||[]).some(function(m){return (m.content&&m.content.trim())||(m.source&&m.source.trim());});}
+function autoIsResearch(text){return /調べ|調査|リサーチ|分析|集計|数え|集め|収集|洗い出|抽出|把握|現状|実態|要因|原因|比較|検証|統計|データ|計測|測定|試算|推計|算出|見積|ヒアリング|インタビュー|アンケート|探|確認|整理/.test(text||'');}
+function isResearchTask(t){return (t.research===true||t.research===false)?t.research:autoIsResearch(t.text);}
 function stepWork(c){
  var h=guide('タスクごとに、心構えを確認しながら泥臭く<b>素材（事実）</b>を集める。<b>心構えの全チェックと、素材（事実）の入力</b>がそろうと完了にできる。<b>全タスク完了までアウトプットへ進めません。</b>');
  var owners=[];c.tasks.forEach(function(t){if(t.owner&&owners.indexOf(t.owner)<0)owners.push(t.owner);});
@@ -676,9 +683,11 @@ function stepWork(c){
  if(c.tasks.length===0)h+='<p class="small muted">先に「T（TASK）」でタスクを入力してください。</p>';
  h+='<div style="display:flex;flex-direction:column;gap:12px">';
  shown.forEach(function(t){
-  var m=t.mentality||{};var ready=mentOk(t)&&factOk(t);
+  var m=t.mentality||{};var research=isResearchTask(t);var ready=research?(mentOk(t)&&factOk(t)):true;var rAuto=!(t.research===true||t.research===false);
   h+='<div style="border:1px solid var(--line);border-radius:8px;padding:12px">';
   h+='<div class="small bold mb2" style="'+(t.done?'color:var(--mut2);text-decoration:line-through':'color:#334155')+'">'+esc(t.text||"（無題のタスク）")+'</div>';
+  h+='<div class="mb3">'+toggleHtml("wResearch",research,"リサーチタスク（①心構え・②素材を入力）"+(rAuto?'｜自動判定':'｜手動設定'),' data-id="'+t.id+'"')+'</div>';
+  if(research){
   h+='<p class="xsmall muted mb2">① リサーチの心構え</p><div class="grid3" style="margin-bottom:12px">';
   h+=toggleHtml("wm_thinkFirst",!!m.thinkFirst,"調べる前に考える（仮説を持ってから動く）",' data-id="'+t.id+'"');
   h+=toggleHtml("wm_surprise",!!m.surprise,"驚き・タネ・仕掛けを考える",' data-id="'+t.id+'"');
@@ -689,8 +698,9 @@ function stepWork(c){
    h+='<div style="border:1px solid var(--line);border-radius:8px;padding:10px"><div class="row gap2 mb2"><input class="inp" data-act="matSrc" data-tid="'+t.id+'" data-mid="'+mt.id+'" value="'+esc(mt.source||"")+'" placeholder="出所（例：◯◯のインタビュー、××のデータ）"><button class="icon-x" data-click="delMat" data-tid="'+t.id+'" data-mid="'+mt.id+'">'+ic('trash',14)+'</button></div><textarea class="inp" rows="2" data-act="matCnt" data-tid="'+t.id+'" data-mid="'+mt.id+'" placeholder="わかった事実・手触りのある内容">'+esc(mt.content||"")+'</textarea></div>';
   });
   h+='</div><button class="dash mt2" style="font-size:12px;padding:6px" data-click="addMat" data-id="'+t.id+'">'+ic('plus',13)+'<span>素材（事実）を追加</span></button>';
+  }
   h+='<div class="mt3 row between gap2" style="padding-top:12px;border-top:1px solid #f1f5f9">';
-  h+='<span class="xsmall" id="whint-'+t.id+'" style="color:'+(t.done?'#059669':(ready?'#64748b':ACCENT))+'">'+(t.done?"完了済み":(ready?"③ 完了にできます":(!mentOk(t)?"心構えを全てチェックしてください":"素材（事実）を1つ以上入力してください")))+'</span>';
+  h+='<span class="xsmall" id="whint-'+t.id+'" style="color:'+(t.done?'#059669':(ready?'#64748b':ACCENT))+'">'+(t.done?"完了済み":(ready?(research?"③ 完了にできます":"完了にできます"):(!mentOk(t)?"心構えを全てチェックしてください":"素材（事実）を1つ以上入力してください")))+'</span>';
   h+='<button id="wdone-'+t.id+'" class="btn '+(t.done?'btn-line':(ready?'btn-brand':'btn-line'))+'" '+((!t.done&&!ready)?'disabled':'')+' data-click="workDone" data-id="'+t.id+'">'+(t.done?ic('circleChk',15)+'<span>完了済み（取消）</span>':ic('circle',15)+'<span>完了にする</span>')+'</button>';
   h+='</div></div>';
  });
@@ -926,10 +936,10 @@ function autoSchedule(){
 }
 function refreshWork(c,tid){
  var t=findTask(c,tid);if(!t)return;
- var ready=mentOk(t)&&factOk(t);
+ var research=isResearchTask(t);var ready=research?(mentOk(t)&&factOk(t)):true;
  var hint=document.getElementById('whint-'+tid);
  var btn=document.getElementById('wdone-'+tid);
- if(hint){hint.style.color=t.done?'#059669':(ready?'#64748b':ACCENT);hint.textContent=t.done?'完了済み':(ready?'③ 完了にできます':(!mentOk(t)?'心構えを全てチェックしてください':'素材（事実）を1つ以上入力してください'));}
+ if(hint){hint.style.color=t.done?'#059669':(ready?'#64748b':ACCENT);hint.textContent=t.done?'完了済み':(ready?(research?'③ 完了にできます':'完了にできます'):(!mentOk(t)?'心構えを全てチェックしてください':'素材（事実）を1つ以上入力してください'));}
  if(btn){btn.disabled=(!t.done&&!ready);}
 }
 function canAdvance(c){
@@ -1169,7 +1179,8 @@ function handleClick(act,el){
   /* sub */
   case 'addSub':c.subRonten.push({id:uid(),text:'',children:[]});break;
   case 'exportSub':_subText=buildSubText(c);break;
-  case 'importSub':{var parsed=parseSubText(_subText);if(!parsed.length){window.alert('読み込めるサブ論点がありません。1行に1つ、サブ論点を書いてください。');return;}if(!window.confirm('テキストの内容で、現在のサブ論点（'+(c.subRonten||[]).length+'件）を置き換えます。よろしいですか？'))return;c.subRonten=parsed;break;}
+  case 'subEditorToggle':_subEditorOpen=!_subEditorOpen;break;
+  case 'importSub':{var parsed=parseSubText(_subText);if(!parsed.subs.length){window.alert('読み込めるサブ論点がありません。1行に1つ、サブ論点を書いてください。');return;}if(!window.confirm('テキストの内容で、現在の論点・サブ論点（'+(c.subRonten||[]).length+'件）を置き換えます。よろしいですか？'))return;if(c.ronten&&parsed.ronten)c.ronten.text=parsed.ronten;c.subRonten=parsed.subs;break;}
   case 'delSub':c.subRonten=c.subRonten.filter(function(s){return s.id!==id;});break;
   case 'addChild':{var s=findSub(c,id);if(s){s.children=s.children||[];s.children.push({id:uid(),text:''});}break;}
   case 'delChild':{var s3=findSub(c,pid);if(s3)s3.children=(s3.children||[]).filter(function(x){return x.id!==cid;});break;}
@@ -1187,7 +1198,8 @@ function handleClick(act,el){
   case 'wm_thorough':{var t9=findTask(c,id);if(t9){t9.mentality=t9.mentality||{};t9.mentality.thorough=!t9.mentality.thorough;}break;}
   case 'addMat':{var ta=findTask(c,id);if(ta){ta.materials=ta.materials||[];ta.materials.push({id:uid(),source:'',content:''});}break;}
   case 'delMat':{var tb=findTask(c,tid);if(tb)tb.materials=(tb.materials||[]).filter(function(m){return m.id!==mid;});break;}
-  case 'workDone':{var tc=findTask(c,id);if(tc){if(tc.done)tc.done=false;else if(mentOk(tc)&&factOk(tc))tc.done=true;}break;}
+  case 'wResearch':{var tr=findTask(c,id);if(tr){tr.research=!isResearchTask(tr);}break;}
+  case 'workDone':{var tc=findTask(c,id);if(tc){if(tc.done)tc.done=false;else if(!isResearchTask(tc)||(mentOk(tc)&&factOk(tc)))tc.done=true;}break;}
   /* output */
   case 'oc_separate':c.output.checks.separate=!c.output.checks.separate;break;
   case 'oc_closePpt':c.output.checks.closePpt=!c.output.checks.closePpt;break;
