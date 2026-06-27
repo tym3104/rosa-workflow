@@ -148,6 +148,8 @@ var LLMCFG_KEY="rosatsusakua_llm_v1";
 var LLM_CONFIG={enabled:false,apiKey:"",model:"claude-opus-4-8"};
 var _showDone=false,_msal=null,_acct=null,_subText='',_researchFilter=false,_subEditorOpen=false;
 var _taskSel={},_taskName='',_taskEditId=null,_predOpen=null,_predQuery='',_predPick=null;
+function resetTransient(){_taskSel={};_taskName='';_taskEditId=null;_predOpen=null;_predQuery='';_predPick=null;_subEditorOpen=false;_schedOwner='';_workOwner='';}
+function hasCycle(tasks){var byId={};(tasks||[]).forEach(function(t){byId[t.id]=t;});var vst={},cyc=false;function dfs(t){if(!t)return;if(vst[t.id]===1){cyc=true;return;}if(vst[t.id]===2)return;vst[t.id]=1;getPreds(t).forEach(function(pid){dfs(byId[pid]);});vst[t.id]=2;}(tasks||[]).forEach(function(t){dfs(t);});return cyc;}
 var _llmTaps=0,_llmTapTimer=null,_llmDraft="",_llmDraftDeadline="",_llmBusy=false;
 var DAY=86400000;
 /* 日本の祝日（自動スケジュール用・2026〜2030。土日は別途除外）。必要に応じて追記可 */
@@ -200,8 +202,8 @@ function newCase(seed){
   ronten:{text:"",checks:{isQuestion:false,matchesGoal:false,oneSentence:false}},
   subRonten:[],subAgreed:false,tasks:[],bufferBizDays:null,
   importance:"low",urgencyOverride:null,taskStatus:"todo",planDate:"",isResearchTask:false,outlook:{eventId:"",webLink:"",syncedAt:0},
-  output:{message:"",structure:"",checks:{separate:false,closePpt:false}},
-  discussion:{discussed:false,noTossOver:false,wordBased:false,minutes:"",feedback:"",next:""}};
+  output:{message:"",structure:"",checks:{separate:false}},
+  discussion:{discussed:false,minutes:"",feedback:"",next:""}};
  if(seed)for(var k in seed)c[k]=seed[k];
  return c;
 }
@@ -258,10 +260,7 @@ function sampleCase(){
       "estHours": "",
       "predecessorIds": [],
       "done": true,
-      "mentality": { "thinkFirst": true, "surprise": true, "thorough": true },
-      "materials": [
-        { "id": "2rq7b2u", "source": "受注データ", "content": "製造業が伸びている、小売行が減っている" }
-      ]
+      "result": "過去3年の受注データを集計（誰が=自分／いつ=6/27／対象=全セグメント）。製造業は売上前年比+18%・件数+12%で伸長、小売業は売上-8%・件数-5%で縮小。出所：基幹システムの受注明細。"
     },
     {
       "id": "ljo3887",
@@ -273,10 +272,7 @@ function sampleCase(){
       "estHours": "",
       "predecessorIds": [],
       "done": true,
-      "mentality": { "thinkFirst": true, "surprise": true, "thorough": true },
-      "materials": [
-        { "id": "cp9nai3", "source": "受注データ", "content": "サービス業の受注率が上がっている、小売業は単価が下がっている" }
-      ]
+      "result": "受注率と単価の変化を集計（6/27・受注明細より）。受注率：サービス業47%→51%(+4pt)、小売業38%→34%(-4pt)。単価：サービス業は横ばい、小売業160万→145万(-9%)。"
     },
     {
       "id": "e4lsdao",
@@ -288,10 +284,7 @@ function sampleCase(){
       "estHours": "",
       "predecessorIds": ["var3jhk", "ljo3887"],
       "done": true,
-      "mentality": { "thinkFirst": true, "surprise": true, "thorough": true },
-      "materials": [
-        { "id": "j20c1ob", "source": "営業担当インタビュー", "content": "製造業は来期、法改正の関係で需要があることがわかった" }
-      ]
+      "result": "勝てる/捨てるセグメントを検討（営業3名へのヒアリング＋上記集計）。製造業は法改正で来期需要拡大の見込み（既存5社が対応製品の受注意向、概算6,000万）。小売業は単価下落が続き優先度低。来期はサービス業・製造業に集中、小売業は縮小の方針案。"
     }
   ],
   "output": {
@@ -342,6 +335,17 @@ function migrateCases(){state.cases.forEach(function(c){var byId={};(c.tasks||[]
  if(c.planDate==null)c.planDate="";
  if(!c.outlook)c.outlook={eventId:"",webLink:"",syncedAt:0};
  if(c.isResearchTask==null)c.isResearchTask=false;
+ // 旧データ整合：3階層目除去、親linkId→子(葉)付け替え、作業結果/完了の正規化、廃止フィールド除去
+ (c.subRonten||[]).forEach(function(s){(s.children||[]).forEach(function(ch){if(ch&&ch.children)delete ch.children;});});
+ var leafMap={};(c.subRonten||[]).forEach(function(s){var kids=(s.children||[]).filter(function(ch){return (ch.text||'').trim();});if(kids.length)leafMap[s.id]=kids.map(function(ch){return ch.id;});});
+ (c.tasks||[]).forEach(function(t){
+  if(typeof t.result==='undefined')t.result='';
+  t.done=!!t.done;
+  delete t.mentality;delete t.materials;delete t.research;
+  if(t.linkIds&&t.linkIds.length){var nl=[];t.linkIds.forEach(function(id){if(leafMap[id]){leafMap[id].forEach(function(cid){if(nl.indexOf(cid)<0)nl.push(cid);});}else if(nl.indexOf(id)<0)nl.push(id);});t.linkIds=nl;}
+ });
+ if(c.discussion){delete c.discussion.noTossOver;delete c.discussion.wordBased;}
+ if(c.output&&c.output.checks)delete c.output.checks.closePpt;
 });}
 function load(){var found=false;try{var raw=window.localStorage&&window.localStorage.getItem(STORE_KEY);if(raw){var a=JSON.parse(raw);if(Array.isArray(a)){state.cases=a;found=true;}}}catch(e){}migrateCases();if(!found&&!state.cases.length){state.cases=[sampleCase()];save();}}
 function save(){try{if(window.localStorage)window.localStorage.setItem(STORE_KEY,JSON.stringify(state.cases));}catch(e){}}
@@ -698,10 +702,6 @@ function gantt(tasks){
  });
  h+='</div></div>';return h;
 }
-function mentOk(t){var m=t.mentality||{};return !!(m.thinkFirst&&m.surprise&&m.thorough);}
-function factOk(t){return (t.materials||[]).some(function(m){return (m.content&&m.content.trim())||(m.source&&m.source.trim());});}
-function autoIsResearch(text){return /調べ|調査|リサーチ|分析|集計|数え|集め|収集|洗い出|抽出|把握|現状|実態|要因|原因|比較|検証|統計|データ|計測|測定|試算|推計|算出|見積|ヒアリング|インタビュー|アンケート|探|確認|整理/.test(text||'');}
-function isResearchTask(t){return (t.research===true||t.research===false)?t.research:autoIsResearch(t.text);}
 function stepWork(c){
  var h=guide('タスクごとに<b>作業結果</b>をテキストで記入する。<b>作業結果を入力すると完了にできる。</b><b>全タスク完了までアウトプットへ進めません。</b>');
  h+='<div class="banner banner-accent mb3">'+ic('alert',16)+'<span><b>リアルで手触りのあるインプット（材料）こそが、アウトプットの質と量を決める。</b>又聞きや検索だけで満足せず、<b>会いに行く・味わいに行く・話を聞きに行く</b>。<span class="muted">（高松智史『コンサルが「最初の3年間」で学ぶコト』）</span></span></div>';
@@ -909,7 +909,6 @@ function sourcesHtml(){
 /* ===== event wiring ===== */
 function findSub(c,id){return (c.subRonten||[]).filter(function(s){return s.id===id;})[0];}
 function findTask(c,id){return (c.tasks||[]).filter(function(t){return t.id===id;})[0];}
-function findMat(c,tid,mid){var t=findTask(c,tid);return t?(t.materials||[]).filter(function(m){return m.id===mid;})[0]:null;}
 function applySchedule(c){
  var norm=normalizeSchedule(c.tasks||[]);var byId={};norm.forEach(function(t){byId[t.id]=t;});
  (c.tasks||[]).forEach(function(t){if(byId[t.id])t.start=byId[t.id].start;});
@@ -1006,7 +1005,6 @@ function onAct(act,el){
   case 'rText':c.ronten.text=v;break;
   case 'sText':{var s=findSub(c,id);if(s)s.text=v;break;}
   case 'scText':{var s2=findSub(c,pid);if(s2){var ch=(s2.children||[]).filter(function(x){return x.id===cid;})[0];if(ch)ch.text=v;}break;}
-  case 'tText':{var t=findTask(c,id);if(t)t.text=v;break;}
   case 'taskName':_taskName=v;return;
   case 'predSearch':{_predQuery=v;_predPick=null;var prows=document.querySelectorAll('[data-predrow="'+id+'"]');var pq=(v||'').toLowerCase();prows.forEach(function(r){r.style.display=(!pq||(r.getAttribute('data-name')||'').indexOf(pq)>=0)?'':'none';});return;}
   case 'sOwner':{var t2=findTask(c,id);if(t2)t2.owner=v;break;}
@@ -1014,8 +1012,6 @@ function onAct(act,el){
   case 'sEnd':{var t4=findTask(c,id);if(t4)t4.end=v;applySchedule(c);break;}
   case 'sHours':{var t5=findTask(c,id);if(t5)t5.estHours=v;break;}
   case 'sBuffer':c.bufferBizDays=(v===''?null:Math.max(0,parseInt(v,10)||0));break;
-  case 'matSrc':{var m=findMat(c,tid,mid);if(m)m.source=v;refreshWork(c,tid);break;}
-  case 'matCnt':{var m2=findMat(c,tid,mid);if(m2)m2.content=v;refreshWork(c,tid);break;}
   case 'taskResult':{var tre=findTask(c,id);if(tre)tre.result=v;refreshWork(c,id);break;}
   case 'schedFilter':_schedOwner=v;break;
   case 'workFilter':_workOwner=v;break;
@@ -1147,7 +1143,7 @@ function llmCall(prompt){
 }
 function buildCaseFromStruct(d,deadline,memo){
  var subs=(d.subRonten||[]).map(function(s){return {id:uid(),text:s.text||'',children:(s.children||[]).map(function(ch){return {id:uid(),text:ch};})};});
- var tasks=(d.tasks||[]).map(function(t){var links=(t.targets||[]).map(function(g){var s=subs[g.sub];if(!s)return null;if(g.child==null||g.child<0)return s.id;return (s.children&&s.children[g.child])?s.children[g.child].id:s.id;}).filter(Boolean);return {id:uid(),text:t.text||'',linkIds:links,owner:'',start:'',end:'',estHours:'',predecessorIds:[],done:false,mentality:{},materials:[]};});
+ var tasks=(d.tasks||[]).map(function(t){var links=(t.targets||[]).map(function(g){var s=subs[g.sub];if(!s)return null;if(g.child==null||g.child<0)return s.id;return (s.children&&s.children[g.child])?s.children[g.child].id:s.id;}).filter(Boolean);return {id:uid(),text:t.text||'',linkIds:links,owner:'',start:'',end:'',estHours:'',predecessorIds:[],done:false,result:''};});
  (d.tasks||[]).forEach(function(t,i){if(!tasks[i])return;tasks[i].predecessorIds=(t.dependsOn||[]).map(function(j){return tasks[j]?tasks[j].id:null;}).filter(Boolean).filter(function(id){return id!==tasks[i].id;});});
  return newCase({title:d.title||'（無題のタスク）',requestMemo:memo||'',deadline:deadline||'',
   ronten:{text:d.ronten||'',checks:{isQuestion:false,matchesGoal:false,oneSentence:false}},
@@ -1170,7 +1166,7 @@ function handleClick(act,el){
  var c=sel();
  switch(act){
   /* app/navigation */
-  case 'home':case 'back':state.selectedId=null;state.reporting=false;state.modal=null;render();return;
+  case 'home':case 'back':resetTransient();state.selectedId=null;state.reporting=false;state.modal=null;render();return;
   case 'closeModal':state.modal=null;render();return;
   case 'slide':state.modal='slide';render();return;
   case 'manual':state.modal='manual';render();return;
@@ -1178,8 +1174,8 @@ function handleClick(act,el){
   case 'import':document.getElementById('filein').click();return;
   case 'export':{var blob=new Blob([JSON.stringify(state.cases,null,2)],{type:'application/json'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='rosatsusakua_backup.json';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);return;}
   case 'sample':state.cases.push(sampleCase());save();render();return;
-  case 'new':{var nc=newCase();state.cases.push(nc);state.selectedId=nc.id;state.reporting=false;save();render();return;}
-  case 'open':state.selectedId=id;state.reporting=false;render();return;
+  case 'new':{resetTransient();var nc=newCase();state.cases.push(nc);state.selectedId=nc.id;state.reporting=false;save();render();return;}
+  case 'open':resetTransient();state.selectedId=id;state.reporting=false;render();return;
   /* task management */
   case 'impToggle':{var ci=caseById(id);if(ci){ci.importance=isImportant(ci)?'low':'high';save();render();}return;}
   case 'todayToggle':{var ct=caseById(id);if(ct){var ti=fmtISO(todayDate());ct.planDate=(ct.planDate===ti)?'':ti;save();render();}return;}
@@ -1200,13 +1196,13 @@ function handleClick(act,el){
   case 'report':state.reporting=true;render();return;
   case 'reportBack':state.reporting=false;render();return;
   case 'print':window.print();return;
-  case 'complete':if(c){c.stepDone.discussion=true;c.taskStatus='done';c.planDate='';}state.selectedId=null;state.reporting=false;save();render();return;
+  case 'complete':resetTransient();if(c){c.stepDone.discussion=true;c.taskStatus='done';c.planDate='';}state.selectedId=null;state.reporting=false;save();render();return;
  }
  if(!c)return;
  switch(act){
-  case 'go':c.currentStep=parseInt(i,10)||0;save();render();return;
-  case 'prev':if(c.currentStep>0)c.currentStep--;save();render();return;
-  case 'next':{var msg=canAdvance(c);if(msg){window.alert(msg);return;}c.stepDone[STEPS[c.currentStep].key]=true;if(c.currentStep<STEPS.length-1)c.currentStep++;save();render();return;}
+  case 'go':resetTransient();c.currentStep=parseInt(i,10)||0;save();render();return;
+  case 'prev':resetTransient();if(c.currentStep>0)c.currentStep--;save();render();return;
+  case 'next':{var msg=canAdvance(c);if(msg){window.alert(msg);return;}resetTransient();c.stepDone[STEPS[c.currentStep].key]=true;if(c.currentStep<STEPS.length-1)c.currentStep++;save();render();return;}
   /* ronten checks */
   case 'rc_isQuestion':c.ronten.checks.isQuestion=!c.ronten.checks.isQuestion;break;
   case 'rc_matchesGoal':c.ronten.checks.matchesGoal=!c.ronten.checks.matchesGoal;break;
@@ -1221,34 +1217,23 @@ function handleClick(act,el){
   case 'delChild':{var s3=findSub(c,pid);if(s3)s3.children=(s3.children||[]).filter(function(x){return x.id!==cid;});break;}
   case 'subAgree':c.subAgreed=!c.subAgreed;break;
   /* task */
-  case 'addTask':c.tasks.push({id:uid(),text:'',linkIds:[],owner:'',start:'',end:'',estHours:'',predecessorIds:[],done:false,mentality:{},materials:[]});break;
-  case 'delTask':{c.tasks=c.tasks.filter(function(t){return t.id!==id;});c.tasks.forEach(function(t){if(t.predecessorIds)t.predecessorIds=t.predecessorIds.filter(function(pid){return pid!==id;});});break;}
+  case 'delTask':{c.tasks=c.tasks.filter(function(t){return t.id!==id;});c.tasks.forEach(function(t){if(t.predecessorIds)t.predecessorIds=t.predecessorIds.filter(function(pid){return pid!==id;});});if(_taskEditId===id){_taskEditId=null;_taskName='';_taskSel={};}if(_predPick===id)_predPick=null;break;}
   case 'predToggle':{var tp=findTask(c,id);if(tp){var pl=getPreds(tp).slice();var ix=pl.indexOf(sid);if(ix>=0)pl.splice(ix,1);else pl.push(sid);tp.predecessorIds=pl;if(tp.predecessorId!==undefined)delete tp.predecessorId;applySchedule(c);}break;}
   case 'taskUp':{var iu=-1;c.tasks.forEach(function(t,k){if(t.id===id)iu=k;});if(iu>0){var tu=c.tasks[iu-1];c.tasks[iu-1]=c.tasks[iu];c.tasks[iu]=tu;}break;}
   case 'taskDown':{var idn=-1;c.tasks.forEach(function(t,k){if(t.id===id)idn=k;});if(idn>=0&&idn<c.tasks.length-1){var td=c.tasks[idn+1];c.tasks[idn+1]=c.tasks[idn];c.tasks[idn]=td;}break;}
-  case 'link':{var t=findTask(c,id);if(t){var links=getLinks(t).slice();var ix=links.indexOf(sid);if(ix>=0)links.splice(ix,1);else links.push(sid);t.linkIds=links;if(t.linkId)delete t.linkId;}break;}
   case 'taskSel':{if(_taskSel[sid])delete _taskSel[sid];else _taskSel[sid]=true;break;}
-  case 'addTaskSel':{var nm=(_taskName||'').trim();var selIds=Object.keys(_taskSel).filter(function(k){return _taskSel[k];});if(!nm){window.alert('タスク名を入力してください。');return;}if(!selIds.length){window.alert('解決するサブ論点を1つ以上チェックしてください。');return;}if(_taskEditId){var teu=findTask(c,_taskEditId);if(teu){teu.text=nm;teu.linkIds=selIds;if(teu.linkId)delete teu.linkId;}}else{c.tasks.push({id:uid(),text:nm,linkIds:selIds,owner:'',start:'',end:'',estHours:'',predecessorIds:[],done:false,result:'',mentality:{},materials:[]});}_taskName='';_taskSel={};_taskEditId=null;break;}
+  case 'addTaskSel':{var nm=(_taskName||'').trim();var selIds=Object.keys(_taskSel).filter(function(k){return _taskSel[k];});if(!nm){window.alert('タスク名を入力してください。');return;}if(!selIds.length){window.alert('解決するサブ論点を1つ以上チェックしてください。');return;}if(_taskEditId){var teu=findTask(c,_taskEditId);if(teu){teu.text=nm;teu.linkIds=selIds;if(teu.linkId)delete teu.linkId;}}else{c.tasks.push({id:uid(),text:nm,linkIds:selIds,owner:'',start:'',end:'',estHours:'',predecessorIds:[],done:false,result:''});}_taskName='';_taskSel={};_taskEditId=null;break;}
   case 'taskEdit':{var ted=findTask(c,id);if(ted){_taskEditId=id;_taskName=ted.text||'';_taskSel={};getLinks(ted).forEach(function(s5){_taskSel[s5]=true;});}break;}
   case 'taskCancelEdit':_taskEditId=null;_taskName='';_taskSel={};break;
   case 'predOpen':_predOpen=(_predOpen===id?null:id);_predQuery='';_predPick=null;break;
   case 'predPick':_predPick=sid;break;
-  case 'predAdd':{var tpa=findTask(c,id);if(tpa){if(!_predPick){window.alert('追加する先行タスクをプルダウンから選んでください。');return;}var pls=getPreds(tpa).slice();if(pls.indexOf(_predPick)<0)pls.push(_predPick);tpa.predecessorIds=pls;if(tpa.predecessorId!==undefined)delete tpa.predecessorId;_predPick=null;_predQuery='';applySchedule(c);}break;}
+  case 'predAdd':{var tpa=findTask(c,id);if(tpa){if(!_predPick){window.alert('追加する先行タスクをプルダウンから選んでください。');return;}if(!c.tasks.some(function(x){return x.id===_predPick;})){window.alert('選択した先行タスクが見つかりません（削除された可能性）。選び直してください。');_predPick=null;return;}var prevP=tpa.predecessorIds;var pls=getPreds(tpa).slice();if(pls.indexOf(_predPick)<0)pls.push(_predPick);tpa.predecessorIds=pls;if(hasCycle(c.tasks)){tpa.predecessorIds=prevP;window.alert('先行タスクの指定が循環します。別のタスクを選んでください。');return;}if(tpa.predecessorId!==undefined)delete tpa.predecessorId;_predPick=null;_predQuery='';applySchedule(c);}break;}
   /* work */
-  case 'wm_thinkFirst':{var t7=findTask(c,id);if(t7){t7.mentality=t7.mentality||{};t7.mentality.thinkFirst=!t7.mentality.thinkFirst;}break;}
-  case 'wm_surprise':{var t8=findTask(c,id);if(t8){t8.mentality=t8.mentality||{};t8.mentality.surprise=!t8.mentality.surprise;}break;}
-  case 'wm_thorough':{var t9=findTask(c,id);if(t9){t9.mentality=t9.mentality||{};t9.mentality.thorough=!t9.mentality.thorough;}break;}
-  case 'addMat':{var ta=findTask(c,id);if(ta){ta.materials=ta.materials||[];ta.materials.push({id:uid(),source:'',content:''});}break;}
-  case 'delMat':{var tb=findTask(c,tid);if(tb)tb.materials=(tb.materials||[]).filter(function(m){return m.id!==mid;});break;}
-  case 'wResearch':{var tr=findTask(c,id);if(tr){tr.research=!isResearchTask(tr);}break;}
   case 'workDone':{var tc=findTask(c,id);if(tc){if(tc.done)tc.done=false;else if((tc.result||'').trim())tc.done=true;}break;}
   /* output */
   case 'oc_separate':c.output.checks.separate=!c.output.checks.separate;break;
-  case 'oc_closePpt':c.output.checks.closePpt=!c.output.checks.closePpt;break;
   /* discussion */
-  case 'dc_noTossOver':c.discussion.noTossOver=!c.discussion.noTossOver;break;
   case 'dc_discussed':c.discussion.discussed=!c.discussion.discussed;break;
-  case 'dc_wordBased':c.discussion.wordBased=!c.discussion.wordBased;break;
   /* modals needing a selected case */
   case 'copilotOut':state.modal='copilotOut';render();return;
   case 'copilotMin':state.modal='copilotMin';render();return;
