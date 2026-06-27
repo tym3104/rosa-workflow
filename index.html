@@ -660,7 +660,7 @@ function stepSchedule(c){
    h+='<div class="mt2"><button class="btn btn-line btn-sm" data-click="predOpen" data-id="'+t.id+'">'+ic(pOpen?'up':'plus',13)+'<span>先行タスクを追加</span></button>';
    if(pOpen){
     var pcand=others.filter(function(o){return preds.indexOf(o.id)<0;});
-    h+='<div style="border:1px solid var(--line);border-radius:8px;padding:8px;margin-top:6px;max-width:460px">';
+    h+='<div style="border:1px solid var(--line);border-radius:8px;padding:8px;margin-top:6px">';
     h+='<div class="row gap2"><input class="inp inp-sm" data-act="predSearch" data-id="'+t.id+'" value="'+esc(_predQuery)+'" placeholder="タスク名で検索（部分一致）"><button class="btn btn-brand btn-sm" data-click="predAdd" data-id="'+t.id+'" style="flex:0 0 auto">'+ic('plus',13)+'<span>追加</span></button></div>';
     h+='<div style="max-height:180px;overflow:auto;display:flex;flex-direction:column;gap:2px;margin-top:6px">';
     if(pcand.length===0)h+='<div class="xsmall muted" style="padding:4px">追加できるタスクがありません。</div>';
