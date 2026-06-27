@@ -308,7 +308,7 @@ function sampleCase(){
   }
  });
 }
-function flattenSubs(sub){var out=[];(sub||[]).forEach(function(s,i){out.push({id:s.id,text:s.text,level:1,tag:"サ"+(i+1)});(s.children||[]).forEach(function(c,j){out.push({id:c.id,text:c.text,level:2,tag:"サ"+(i+1)+"-"+(j+1)});});});return out;}
+function flattenSubs(sub){var out=[];(sub||[]).forEach(function(s,i){var kids=(s.children||[]).filter(function(c){return (c.text||'').trim();});out.push({id:s.id,text:s.text,level:1,tag:"サ"+(i+1),hasKids:kids.length>0,linkable:kids.length===0});(s.children||[]).forEach(function(c,j){out.push({id:c.id,text:c.text,level:2,tag:"サ"+(i+1)+"-"+(j+1),hasKids:false,linkable:true});});});return out;}
 function isResearch(c){return !!(c&&c.isResearchTask);}
 // サブ論点 ⇔ テキスト（1行=1サブ論点／行頭スペース2つ＋「- 」でサブサブ論点）
 function buildSubText(c){var lines=[];(c.subRonten||[]).forEach(function(s){lines.push('- '+(s.text||''));(s.children||[]).forEach(function(ch){lines.push('  - '+(ch.text||''));});});return lines.join('\n');}
@@ -587,7 +587,7 @@ function stepTask(c){
   var upDis=idx===0,downDis=idx===c.tasks.length-1;
   h+='<div class="row gap2 mb2"><span class="bold xsmall muted" style="flex:0 0 auto">T'+(idx+1)+'</span><input class="inp" data-act="tText" data-id="'+t.id+'" value="'+esc(t.text)+'" placeholder="タスクの内容（例：過去3年の受注データを集計し傾向を出す）"><button class="btn-ghost" style="padding:2px'+(upDis?';opacity:.3':'')+'" title="上へ移動" data-click="taskUp" data-id="'+t.id+'"'+(upDis?' disabled':'')+'>'+ic('up',16)+'</button><button class="btn-ghost" style="padding:2px'+(downDis?';opacity:.3':'')+'" title="下へ移動" data-click="taskDown" data-id="'+t.id+'"'+(downDis?' disabled':'')+'>'+ic('down',16)+'</button><button class="icon-x" data-click="delTask" data-id="'+t.id+'">'+ic('trash',15)+'</button></div>';
   h+='<p class="xsmall muted mb2">解決するサブ論点（複数選択可）</p><div class="wrapf flex">';
-  opts.forEach(function(o){var on=links.indexOf(o.id)>=0;h+='<button class="chip'+(on?' on':'')+'" data-click="link" data-id="'+t.id+'" data-sid="'+o.id+'" title="'+esc(o.text)+'"><b>'+o.tag+'</b> '+esc(clip(o.text))+'</button>';});
+  opts.forEach(function(o){if(o.linkable===false){h+='<button class="chip" disabled style="opacity:.45;cursor:not-allowed" title="サブサブ論点があるため紐付け対象外。サブサブ論点に紐付けてください"><b>'+o.tag+'</b> '+esc(clip(o.text))+'</button>';return;}var on=links.indexOf(o.id)>=0;h+='<button class="chip'+(on?' on':'')+'" data-click="link" data-id="'+t.id+'" data-sid="'+o.id+'" title="'+esc(o.text)+'"><b>'+o.tag+'</b> '+esc(clip(o.text))+'</button>';});
   h+='</div>';
   if(links.length===0)h+='<p class="xsmall" style="color:var(--accent);margin-top:6px">対象のサブ論点を1つ以上選んでください。</p>';
   h+='</div>';
@@ -598,7 +598,7 @@ function stepTask(c){
   h+='<div style="border:1px solid var(--line);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:10px">';
   opts.forEach(function(o){
    var linked=c.tasks.filter(function(t){return getLinks(t).indexOf(o.id)>=0;});
-   h+='<div class="flex gap2" style="margin-left:'+(o.level===2?16:0)+'px"><span class="bold xsmall" style="flex:0 0 auto;margin-top:2px;color:'+(o.level===2?TERTIARY:BRAND)+'">'+o.tag+'</span><div class="grow" style="min-width:0"><div class="small" style="color:#334155">'+esc(o.text)+'</div>'+(linked.length===0?'<div class="xsmall" style="color:var(--accent)">タスク未割当</div>':'<ul style="margin:2px 0 0;padding-left:0;list-style:none">'+linked.map(function(t){return '<li class="xsmall muted">└ '+esc(t.text||"（無題）")+'</li>';}).join('')+'</ul>')+'</div></div>';
+   h+='<div class="flex gap2" style="margin-left:'+(o.level===2?16:0)+'px"><span class="bold xsmall" style="flex:0 0 auto;margin-top:2px;color:'+(o.level===2?TERTIARY:BRAND)+'">'+o.tag+'</span><div class="grow" style="min-width:0"><div class="small" style="color:#334155">'+esc(o.text)+'</div>'+(o.linkable===false?'<div class="xsmall muted">サブサブ論点で紐付け（対象外）</div>':linked.length===0?'<div class="xsmall" style="color:var(--accent)">タスク未割当</div>':'<ul style="margin:2px 0 0;padding-left:0;list-style:none">'+linked.map(function(t){return '<li class="xsmall muted">└ '+esc(t.text||"（無題）")+'</li>';}).join('')+'</ul>')+'</div></div>';
   });
   h+='</div></div>';
  }
@@ -936,7 +936,7 @@ function canAdvance(c){
  var k=STEPS[c.currentStep].key;
  if(k==='ronten'){var ch=c.ronten.checks;if(!(ch.isQuestion&&ch.matchesGoal&&ch.oneSentence))return 'セルフチェック3つをすべて満たしてください。';}
  if(k==='sub'){var subs=(c.subRonten||[]).filter(function(s){return (s.text||'').trim();});if(subs.length===0)return 'サブ論点を1つ以上入力してください。';if(!c.subAgreed)return '「依頼者とサブ論点の内容について合意を得た」にチェックを入れてください。';}
- if(k==='task'){var opts=flattenSubs(c.subRonten).filter(function(o){return o.text.trim();});if(opts.length===0)return '先にサブ論点を入力してください。';if((c.tasks||[]).length===0)return 'タスクを1つ以上追加してください。';var unassigned=opts.filter(function(o){return !c.tasks.some(function(t){return getLinks(t).indexOf(o.id)>=0;});});if(unassigned.length>0)return 'すべてのサブ論点にタスクを割り当ててください。';}
+ if(k==='task'){var opts=flattenSubs(c.subRonten).filter(function(o){return o.text.trim();});if(opts.length===0)return '先にサブ論点を入力してください。';if((c.tasks||[]).length===0)return 'タスクを1つ以上追加してください。';var unassigned=opts.filter(function(o){return o.linkable!==false&&!c.tasks.some(function(t){return getLinks(t).indexOf(o.id)>=0;});});if(unassigned.length>0)return 'すべてのサブ論点にタスクを割り当ててください。';}
  if(k==='schedule'){var bad=(c.tasks||[]).some(function(t){return t.start&&t.end&&parseDate(t.end)&&parseDate(t.start)&&parseDate(t.end)<parseDate(t.start);});var over=(c.tasks||[]).some(function(t){return t.end&&c.deadline&&parseDate(t.end)&&parseDate(c.deadline)&&parseDate(t.end)>parseDate(c.deadline);});if(bad)return '終了日が開始日より前のタスクがあります。';if(over)return '締切より後の終了日のタスクがあります。';}
  if(k==='work'){if((c.tasks||[]).length===0)return '先にタスクを入力してください。';if(!c.tasks.every(function(t){return t.done;}))return 'すべてのタスクを完了にしてください。';}
  if(k==='output'){if(!(c.output.checks.separate&&c.output.checks.closePpt))return '下の2つのチェックを両方つけてください。';}
