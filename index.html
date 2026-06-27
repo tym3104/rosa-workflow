@@ -717,7 +717,7 @@ function stepWork(c){
   h+='<div style="border:1px solid var(--line);border-radius:8px;padding:12px">';
   h+='<div class="small bold mb2" style="'+(t.done?'color:var(--mut2);text-decoration:line-through':'color:#334155')+'">'+esc(t.text||"（無題のタスク）")+'</div>';
   h+='<p class="xsmall muted mb2">作業結果</p>';
-  h+='<textarea class="inp" rows="4" data-act="taskResult" data-id="'+t.id+'" placeholder="作業結果を入力" style="width:100%;line-height:1.6;resize:vertical">'+esc(t.result||"")+'</textarea>';
+  h+='<textarea class="inp" rows="4" data-act="taskResult" data-id="'+t.id+'" placeholder="5W1Hを明確に作業結果を入力する" style="width:100%;line-height:1.6;resize:vertical">'+esc(t.result||"")+'</textarea>';
   h+='<div class="mt3 row between gap2" style="padding-top:12px;border-top:1px solid #f1f5f9">';
   h+='<span class="xsmall" id="whint-'+t.id+'" style="color:'+(t.done?'#059669':(ready?'#64748b':ACCENT))+'">'+(t.done?"完了済み":(ready?"完了にできます":"作業結果を入力してください"))+'</span>';
   h+='<button id="wdone-'+t.id+'" class="btn '+(t.done?'btn-line':(ready?'btn-brand':'btn-line'))+'" '+((!t.done&&!ready)?'disabled':'')+' data-click="workDone" data-id="'+t.id+'">'+(t.done?ic('circleChk',15)+'<span>完了済み（取消）</span>':ic('circle',15)+'<span>完了にする</span>')+'</button>';
