@@ -1,0 +1,1078 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ロ→サ→T→ス→作→ア ワークフロー</title>
+<style>
+:root{
+  --brand:#12b3c7;--brand-dark:#0e96a8;--brand-soft:#E6F7FA;--brand-border:#A9DDE6;
+  --accent:#D74C77;--accent-soft:#FCEAF1;--accent-border:#EBA9C2;--accent-text:#9A2B50;
+  --tertiary:#8B7CBA;--tertiary-soft:#F0EDF7;--tertiary-text:#473F6B;
+  --ink:#2A2E33;--muted:#64748b;--mut2:#94a3b8;--line:#e2e8f0;--line2:#cbd5e1;--bg:#F5F7F9;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:"Meiryo","メイリオ","Segoe UI","Hiragino Sans","Yu Gothic UI",system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.5}
+.wrap{max-width:1024px;margin:0 auto;padding:0 16px}
+.hdr{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.92);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+.hdr-in{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;max-width:1024px;margin:0 auto}
+.logo{display:flex;align-items:center;gap:8px;cursor:pointer;background:none;border:0;padding:0}
+.logo .mk{width:36px;height:36px;border-radius:8px;background:var(--brand);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;letter-spacing:-1px}
+.logo .t1{font-weight:700;color:var(--ink);text-align:left;line-height:1.1}
+.logo .t2{font-size:12px;color:var(--mut2);text-align:left}
+main{padding:24px 0}
+.row{display:flex;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:6px;border-radius:8px;font-size:14px;font-weight:500;border:1px solid transparent;cursor:pointer;padding:8px 14px;background:#fff;color:var(--ink)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-sm{padding:6px 12px}
+.btn-brand{background:var(--brand);color:#fff}.btn-brand:hover{background:var(--brand-dark)}
+.btn-dark{background:#2A2E33;color:#fff}.btn-dark:hover{background:#15181c}
+.btn-outline{border:1px solid var(--brand);color:var(--brand);background:#fff}.btn-outline:hover{background:var(--brand-soft)}
+.btn-line{border:1px solid var(--line2);color:var(--muted)}.btn-line:hover{background:#f1f5f9}
+.btn-emerald{background:#059669;color:#fff}.btn-emerald:hover{background:#047857}
+.btn-ghost{background:none;border:0;color:var(--muted);cursor:pointer;padding:8px;display:inline-flex;align-items:center;gap:4px;font-size:14px}
+.btn-ghost:hover{color:var(--ink)}
+.icon-x{background:none;border:0;color:#cbd5e1;cursor:pointer;padding:2px;line-height:0}
+.icon-x:hover{color:#ef4444}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px}
+.card+.card{margin-top:16px}
+.field{margin-bottom:16px}
+.lbl{display:block;font-size:14px;font-weight:500;color:#334155;margin-bottom:6px}
+.lblsm{font-size:12px;color:var(--mut2)}
+.inp{width:100%;padding:8px 12px;border-radius:8px;border:1px solid var(--line2);font-size:14px;background:#fff;color:var(--ink);font-family:inherit}
+.inp:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 2px rgba(18,179,199,.25)}
+.inp:disabled{background:#f1f5f9;color:var(--muted);cursor:not-allowed}
+textarea.inp{resize:vertical}
+.hint{font-size:12px;color:var(--mut2);margin-top:4px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.grid4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:640px){.grid3,.grid4,.grid2{grid-template-columns:1fr 1fr}}
+.guide{display:flex;gap:10px;padding:12px;border-radius:8px;background:var(--tertiary-soft);border:1px solid #D8CFEA;color:var(--tertiary-text);font-size:14px;margin-bottom:16px}
+.banner{display:flex;gap:10px;padding:14px;border-radius:12px;font-size:14px}
+.banner-accent{background:var(--accent-soft);border:1px solid var(--accent-border);color:var(--accent-text)}
+.toggle{display:flex;align-items:flex-start;gap:10px;width:100%;text-align:left;padding:10px;border-radius:8px;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:14px;color:#334155;font-family:inherit}
+.toggle:hover{border-color:var(--line2)}
+.toggle.on{background:#ecfdf5;border-color:#6ee7b7;color:#065f46}
+.toggle .bx{margin-top:1px;flex:0 0 auto;width:20px;height:20px;border-radius:6px;border:2px solid var(--line2);display:flex;align-items:center;justify-content:center;color:#fff}
+.toggle.on .bx{background:#10b981;border-color:#10b981}
+.chip{font-size:12px;padding:4px 8px;border-radius:999px;border:1px solid var(--line2);background:#fff;color:var(--muted);cursor:pointer;font-family:inherit;margin:0 4px 4px 0}
+.chip.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+.dash{border:1px dashed var(--line2);background:#fff;color:var(--muted);border-radius:8px;padding:8px;width:100%;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;font-size:14px;font-family:inherit}
+.dash:hover{border-color:var(--brand);color:var(--brand)}
+.stepper{display:flex;gap:4px;overflow-x:auto}
+.step{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:64px;padding:8px 10px;border-radius:8px;border:0;background:none;cursor:pointer;color:var(--mut2);font-family:inherit;position:relative}
+.step:hover{background:#f8fafc}
+.step.done{background:#ecfdf5;color:#047857}
+.step.on{background:var(--brand);color:#fff}
+.step .k{font-size:18px;font-weight:700;line-height:1}
+.step .l{font-size:10px;line-height:1}
+.step .dot{position:absolute;top:4px;right:8px;color:#10b981}
+.stepdiv{flex:0 0 auto;align-self:stretch;display:flex;align-items:center;justify-content:center;margin:0 6px;padding:0 2px}
+.stepdiv .bar{flex:1;width:0;border-left:2px dashed var(--brand-border);min-height:22px}
+.manualdiv{border-top:2px dashed var(--brand-border);margin:10px 0}
+.seg{display:flex;gap:4px}
+.seg i{flex:1;height:6px;border-radius:999px;background:var(--line);display:block}
+.casecard{position:relative;background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;cursor:pointer}
+.casecard:hover{border-color:var(--brand);box-shadow:0 1px 4px rgba(0,0,0,.07)}
+.muted{color:var(--mut2)}
+.small{font-size:12px}
+.xsmall{font-size:11px}
+.bold{font-weight:700}
+.flex{display:flex}.between{justify-content:space-between}.center{align-items:center}.gap2{gap:8px}.gap3{gap:12px}.wrapf{flex-wrap:wrap}.grow{flex:1}.mt2{margin-top:8px}.mt3{margin-top:12px}.mt4{margin-top:16px}.mb2{margin-bottom:8px}.mb3{margin-bottom:12px}
+.foot{padding:8px 0 32px}
+.modal-bg{position:fixed;inset:0;z-index:50;background:rgba(20,24,28,.55);display:flex;align-items:center;justify-content:center;padding:16px}
+.modal{background:#fff;border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.25);width:100%;max-height:92vh;display:flex;flex-direction:column}
+.modal-h{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--line)}
+.modal-b{overflow:auto;padding:20px}
+.promptbox{border:1px solid var(--line);border-radius:8px;padding:12px;background:#f8fafc;margin-bottom:16px}
+.promptbox textarea{width:100%;font-family:monospace;font-size:12px;border:1px solid var(--line2);border-radius:8px;padding:8px;background:#fff;resize:vertical}
+.gantt{border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+.gtrack{position:relative;flex:1;height:24px;border-radius:6px;background:#f1f5f9}
+.gbar{position:absolute;top:0;height:24px;border-radius:6px;display:flex;align-items:center;padding:0 6px;overflow:hidden;color:#fff;font-size:10px;white-space:nowrap}
+.glabel{width:128px;flex:0 0 auto;font-size:12px;color:#475569;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+table.rt{width:100%;border-collapse:collapse;font-size:12px}
+table.rt th,table.rt td{border:1px solid #cbd5e1;padding:4px 6px;text-align:left}
+table.rt th{background:var(--brand-soft)}
+.rpt{max-width:740px;margin:0 auto;background:#fff;line-height:1.9;padding:32px 36px;border-radius:10px}
+.rpt h3{color:var(--brand);border-bottom:2px solid var(--brand-soft);font-size:14px;margin:32px 0 14px;padding-bottom:7px}
+.rpt h3:first-of-type{margin-top:20px}
+.rpt p{margin:8px 0 18px}
+.rpt .small{margin-bottom:6px}
+.rpt .small>div{margin-bottom:6px}
+.rpt .pre{margin:4px 0 16px}
+.rpt table.rt{margin:8px 0 20px}
+@media print{.rpt{padding:0}.gantt,.gtrack,.gbar{-webkit-print-color-adjust:exact;print-color-adjust:exact}.gantt{overflow:visible}}
+.zone{font-size:14px;font-weight:700;padding:6px 12px;border-radius:8px;display:inline-flex;align-items:center;gap:6px}
+.fcard{border:2px solid;border-radius:12px;padding:12px}
+.pre{white-space:pre-wrap}
+@media print{.no-print{display:none!important}body{background:#fff}}
+@page{size:A4 portrait;margin:14mm}
+.dash-greet{display:flex;flex-direction:column;gap:4px;margin-bottom:16px}
+.dash-greet .big{font-size:16px;font-weight:700}
+.dash-greet .sum{font-size:13px;color:var(--muted)}
+.dash-h2{font-size:15px;font-weight:700;margin:22px 0 10px;display:flex;align-items:center;gap:8px}
+.quad-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:640px){.quad-grid{grid-template-columns:1fr}}
+.quad{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fbfdfe}
+.quad>h4{margin:0 0 10px;font-size:13px;font-weight:700;display:flex;flex-direction:column;gap:1px}
+.quad.q1{border-color:var(--accent-border)}.quad.q1>h4{color:var(--accent-text)}
+.quad.q2{border-color:var(--brand-border)}.quad.q2>h4{color:var(--brand-dark)}
+.quad.q3{border-color:#f1c98a}.quad.q3>h4{color:#b45309}
+.quad.q4{border-color:var(--line2)}.quad.q4>h4{color:var(--mut2)}
+.tcard{border:1px solid var(--line);border-radius:10px;padding:10px;background:#fff;margin-bottom:8px}
+.tctitle{border:0;background:none;font-weight:700;font-size:14px;color:var(--ink);text-align:left;cursor:pointer;padding:0;font-family:inherit;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1}
+.tctitle:hover{color:var(--brand)}
+.badge{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.badge.todo{background:#f1f5f9;color:#475569}
+.badge.doing{background:var(--brand-soft);color:var(--brand-dark)}
+.badge.done{background:#ecfdf5;color:#047857}
+.badge.hold{background:#fef3c7;color:#92400e}
+.badge.over{background:#fee2e2;color:#b91c1c}
+.badge.urg{background:var(--accent-soft);color:var(--accent-text)}
+.badge.research{background:#ede9fe;color:#6d28d9}
+.on-research{background:#7c3aed;color:#fff;border-color:#7c3aed}
+.star{cursor:pointer;border:0;background:none;font-size:17px;line-height:1;padding:2px 4px;font-family:inherit}
+.star.on{color:#f59e0b}.star.off{color:#cbd5e1}
+.inp-sm{padding:4px 8px;font-size:12px;height:auto;width:auto}
+.btn-sm.on-today{background:var(--brand);color:#fff;border-color:var(--brand)}
+</style>
+<div id="root"></div>
+<input id="filein" type="file" accept="application/json,.json" style="display:none">
+<script>
+"use strict";
+var BRAND="#12b3c7",ACCENT="#D74C77",TERTIARY="#8B7CBA",BRAND_SOFT="#E6F7FA",ACCENT_SOFT="#FCEAF1",BRAND_BORDER="#A9DDE6",ACCENT_BORDER="#EBA9C2",ACCENT_TEXT="#9A2B50",TERTIARY_SOFT="#F0EDF7",TERTIARY_TEXT="#473F6B";
+var STORE_KEY="rosatsusakua_offline_v1";
+var URGENT_BIZ_DAYS=3; // 締切までの残り営業日がこれ以下なら「緊急」
+var _showDone=false,_subText='',_researchFilter=false,_subEditorOpen=false;
+var _taskSel={},_taskName='',_taskEditId=null,_predOpen=null,_predQuery='',_predPick=null;
+function resetTransient(){_taskSel={};_taskName='';_taskEditId=null;_predOpen=null;_predQuery='';_predPick=null;_subEditorOpen=false;_schedOwner='';_workOwner='';}
+function hasCycle(tasks){var byId={};(tasks||[]).forEach(function(t){byId[t.id]=t;});var vst={},cyc=false;function dfs(t){if(!t)return;if(vst[t.id]===1){cyc=true;return;}if(vst[t.id]===2)return;vst[t.id]=1;getPreds(t).forEach(function(pid){dfs(byId[pid]);});vst[t.id]=2;}(tasks||[]).forEach(function(t){dfs(t);});return cyc;}
+var DAY=86400000;
+/* 日本の祝日（自動スケジュール用・2026〜2030。土日は別途除外）。必要に応じて追記可 */
+var HOLIDAYS={
+ '2026-01-01':1,'2026-01-12':1,'2026-02-11':1,'2026-02-23':1,'2026-03-20':1,'2026-04-29':1,'2026-05-03':1,'2026-05-04':1,'2026-05-05':1,'2026-05-06':1,'2026-07-20':1,'2026-08-11':1,'2026-09-21':1,'2026-09-22':1,'2026-09-23':1,'2026-10-12':1,'2026-11-03':1,'2026-11-23':1,
+ '2027-01-01':1,'2027-01-11':1,'2027-02-11':1,'2027-02-23':1,'2027-03-21':1,'2027-04-29':1,'2027-05-03':1,'2027-05-04':1,'2027-05-05':1,'2027-07-19':1,'2027-08-11':1,'2027-09-20':1,'2027-09-23':1,'2027-10-11':1,'2027-11-03':1,'2027-11-23':1,
+ '2028-01-01':1,'2028-01-10':1,'2028-02-11':1,'2028-02-23':1,'2028-03-20':1,'2028-04-29':1,'2028-05-03':1,'2028-05-04':1,'2028-05-05':1,'2028-07-17':1,'2028-08-11':1,'2028-09-18':1,'2028-09-22':1,'2028-10-09':1,'2028-11-03':1,'2028-11-23':1,
+ '2029-01-01':1,'2029-01-08':1,'2029-02-11':1,'2029-02-12':1,'2029-02-23':1,'2029-03-20':1,'2029-04-29':1,'2029-04-30':1,'2029-05-03':1,'2029-05-04':1,'2029-05-05':1,'2029-07-16':1,'2029-08-11':1,'2029-09-17':1,'2029-09-23':1,'2029-09-24':1,'2029-10-08':1,'2029-11-03':1,'2029-11-23':1,
+ '2030-01-01':1,'2030-01-14':1,'2030-02-11':1,'2030-02-23':1,'2030-03-20':1,'2030-04-29':1,'2030-05-03':1,'2030-05-04':1,'2030-05-05':1,'2030-05-06':1,'2030-07-15':1,'2030-08-11':1,'2030-08-12':1,'2030-09-16':1,'2030-09-23':1,'2030-10-14':1,'2030-11-03':1,'2030-11-04':1,'2030-11-23':1
+};
+var STEPS=[
+ {key:"ronten",short:"ロ",label:"論点",sub:"何を答えるべきか",deliverable:"論点スライド"},
+ {key:"sub",short:"サ",label:"サブ論点",sub:"問いに分解する",deliverable:"論点スライド（階層）"},
+ {key:"task",short:"T",label:"TASK",sub:"解く手段を設計",deliverable:"ワークプラン"},
+ {key:"schedule",short:"ス",label:"スケジュール",sub:"誰が・いつまでに",deliverable:"WBS"},
+ {key:"work",short:"作",label:"作業",sub:"判断のための素材を集める",deliverable:"リアルな素材"},
+ {key:"output",short:"ア",label:"アウトプット",sub:"まとめる（通過点）",deliverable:"Word/スライド"},
+ {key:"discussion",short:"D",label:"ディスカッション",sub:"議論して完了",deliverable:"合意・次の論点"}
+];
+var ICONS={
+ plus:'<path d="M5 12h14M12 5v14"/>',trash:'<path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/>',
+ check:'<path d="M20 6 9 17l-5-5"/>',aL:'<path d="M19 12H5M12 19l-7-7 7-7"/>',aR:'<path d="M5 12h14M12 5l7 7-7 7"/>',
+ cR:'<path d="M9 6l6 6-6 6"/>',dl:'<path d="M12 3v12M7 10l5 5 5-5M5 21h14"/>',ul:'<path d="M12 21V9M7 14l5-5 5 5M5 3h14"/>',
+ print:'<path d="M6 9V3h12v6M6 18H4v-7h16v7h-2M8 14h8v7H8z"/>',x:'<path d="M18 6 6 18M6 6l12 12"/>',
+ lock:'<path d="M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4"/>',copy:'<path d="M9 9h11v11H9zM5 15V4h11v2"/>',
+ alert:'<path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/>',
+ bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12c1 1 1 2 1 3h6c0-1 0-2 1-3a7 7 0 0 0-4-12z"/>',
+ spark:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/>',
+ flame:'<path d="M12 2c1 4-3 5-3 9a3 3 0 0 0 6 0c0-2-1-3-1-3 2 1 3 3 3 5a5 5 0 0 1-10 0c0-4 4-6 5-11z"/>',
+ circle:'<circle cx="12" cy="12" r="9"/>',
+ circleChk:'<circle cx="12" cy="12" r="9"/><path d="M8.5 12l2.5 2.5 4.5-5"/>',
+ clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+ cal:'<path d="M4 6h16v15H4zM4 10h16M8 3v4M16 3v4"/>',
+ book:'<path d="M4 5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2zM18 17H6"/>',
+ img:'<path d="M3 5h18v14H3zM3 16l5-5 4 4 3-3 6 6"/><circle cx="8.5" cy="9" r="1.5"/>',
+ up:'<path d="M18 15l-6-6-6 6"/>',
+ down:'<path d="M6 9l6 6 6-6"/>',
+ gear:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1V21a2 2 0 0 1-4 0v-.1A1.6 1.6 0 0 0 6.6 19l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.6 1.6 0 0 0 3 13.4H3a2 2 0 0 1 0-4h.1A1.6 1.6 0 0 0 4.6 6.6l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.6 1.6 0 0 0 10 4.6V4a2 2 0 0 1 4 0v.1a1.6 1.6 0 0 0 2.7 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8v.2a1.6 1.6 0 0 0 1.4 1H21a2 2 0 0 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"/>'
+};
+function ic(n,s){s=s||16;return '<svg width="'+s+'" height="'+s+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;flex:0 0 auto">'+(ICONS[n]||'')+'</svg>';}
+function uid(){return Math.random().toString(36).slice(2,9);}
+function esc(s){return (s==null?'':String(s)).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function parseDate(s){if(!s)return null;var d=new Date(s+"T00:00:00");return isNaN(d.getTime())?null:d;}
+function fmtMD(d){return (d.getMonth()+1)+"/"+d.getDate();}
+function clip(s,n){n=n||12;s=s||"";return s.length>n?s.slice(0,n)+"…":s;}
+
+function newCase(seed){
+ var c={id:uid(),title:"",requester:"",requestMemo:"",deadline:"",createdAt:Date.now(),currentStep:0,
+  stepDone:{ronten:false,sub:false,task:false,schedule:false,work:false,output:false,discussion:false},
+  ronten:{text:"",checks:{isQuestion:false,matchesGoal:false,oneSentence:false}},
+  subRonten:[],subAgreed:false,tasks:[],bufferBizDays:null,
+  importance:"low",urgencyOverride:null,taskStatus:"todo",planDate:"",isResearchTask:false,
+  output:{message:"",structure:"",checks:{separate:false}},
+  discussion:{discussed:false,minutes:"",feedback:"",next:""}};
+ if(seed)for(var k in seed)c[k]=seed[k];
+ return c;
+}
+function sampleCase(){
+ return newCase({
+  "title": "来期の営業戦略を整理してほしい",
+  "requester": "部長",
+  "requestMemo": "「来期の営業、どう攻めるか整理しといて」と言われた。締切は来週月曜の会議まで。",
+  "deadline": "2026-06-29",
+  "currentStep": 6,
+  "stepDone": {
+    "ronten": true,
+    "sub": true,
+    "task": true,
+    "schedule": true,
+    "work": true,
+    "output": true,
+    "discussion": true
+  },
+  "ronten": {
+    "text": "来期、限られたリソースをどの顧客セグメントに集中投下すれば売上を最大化できるか？",
+    "checks": {
+      "isQuestion": true,
+      "matchesGoal": true,
+      "oneSentence": true
+    }
+  },
+  "subRonten": [
+    {
+      "id": "87mtlab",
+      "text": "今期どのセグメントが伸び/縮みしたか？",
+      "children": [
+        {
+          "id": "332gfsc",
+          "text": "受注率・単価の変化は？"
+        }
+      ]
+    },
+    {
+      "id": "qjnlqe1",
+      "text": "来期、勝てる/捨てるセグメントはどこか？",
+      "children": []
+    }
+  ],
+  "subAgreed": true,
+  "tasks": [
+    {
+      "id": "var3jhk",
+      "text": "今期どのセグメントが伸び/縮みしたか調べる",
+      "linkIds": ["87mtlab"],
+      "owner": "自分",
+      "start": "2026-06-27",
+      "end": "2026-06-28",
+      "estHours": "",
+      "predecessorIds": [],
+      "done": true,
+      "result": "過去3年の受注データを集計（誰が=自分／いつ=6/27／対象=全セグメント）。製造業は売上前年比+18%・件数+12%で伸長、小売業は売上-8%・件数-5%で縮小。出所：基幹システムの受注明細。"
+    },
+    {
+      "id": "ljo3887",
+      "text": "受注率・単価の変化を調べる",
+      "linkIds": ["332gfsc"],
+      "owner": "自分",
+      "start": "2026-06-27",
+      "end": "2026-06-28",
+      "estHours": "",
+      "predecessorIds": [],
+      "done": true,
+      "result": "受注率と単価の変化を集計（6/27・受注明細より）。受注率：サービス業47%→51%(+4pt)、小売業38%→34%(-4pt)。単価：サービス業は横ばい、小売業160万→145万(-9%)。"
+    },
+    {
+      "id": "e4lsdao",
+      "text": "来期、勝てる/捨てるセグメントはどこかについて考える",
+      "linkIds": ["qjnlqe1"],
+      "owner": "自分",
+      "start": "2026-06-29",
+      "end": "2026-06-29",
+      "estHours": "",
+      "predecessorIds": ["var3jhk", "ljo3887"],
+      "done": true,
+      "result": "勝てる/捨てるセグメントを検討（営業3名へのヒアリング＋上記集計）。製造業は法改正で来期需要拡大の見込み（既存5社が対応製品の受注意向、概算6,000万）。小売業は単価下落が続き優先度低。来期はサービス業・製造業に集中、小売業は縮小の方針案。"
+    }
+  ],
+  "output": {
+    "message": "**来期は「製造業」に営業リソースを集中投下すべき。**今期すでに受注が伸びている上に、法改正による需要拡大という追い風があり、最も確度高く売上を伸ばせるセグメントだから(逆に、受注・単価ともに縮む小売業はリソースを引き上げる)。",
+    "structure": "【現状】\n今期のセグメント別動向：製造業が伸長、小売業が縮小\n受注率・単価の変化：サービス業は受注率が上昇、小売業は単価が下落\n\n【論点への答え】\n勝てる(集中投下)：製造業 ＝ 最優先\n効率で狙う(次点)：サービス業 ＝ 受注率の高さを活かす\n捨てる(縮小・撤退)：小売業 ＝ リソースを引き上げ\n\n【根拠】\n製造業：「今期の受注増」×「法改正による来期需要」の二重の追い風。投下リソースが売上に直結しやすい\nサービス業：受注率が上昇＝同じ営業工数でも受注に変換されやすく、投資効率が高い\n小売業：受注減と単価減が同時進行＝リソースを投じても売上が伸びにくく、投資効率が悪化\n\n【ネクスト】\n製造業：法改正に絡む需要の中身(対象商材・規模・時期)を特定し、ターゲットリスト化\nリソース再配分案(人員・予算)を作成 → セグメント別の売上シミュレーションで検証\nサービス業：受注率が上がった要因を分析し、再現性を確認\n小売業：縮小・撤退の定量基準(単価/受注率のライン)を設定し、撤退ラインを合意",
+    "checks": { "separate": true, "closePpt": true }
+  },
+  "discussion": {
+    "discussed": true,
+    "noTossOver": true,
+    "wordBased": true,
+    "minutes": "議事メモ：来期の重点顧客セグメントについて\n日時： 2026年6月25日\n\n出席者： ヤマダ（上長）、外山（起案）\n\n議題： 来期、限られたリソースをどのセグメントに集中投下するか（たたき台レビュー）\n結論（合意事項）\n\n大方針「製造業を最優先」は支持。ただし**「法改正需要の持続性・規模を裏取りできれば」という条件付き**で正式決定とする。\n小売業はいきなり「撤退」とせず、まず「縮小」と位置づけ直す。撤退の判断は定量基準を設けてから。\n最終のリソース配分は、全セグメント×（伸び縮み・受注率・単価）のマトリクスを埋めてから確定する。\n\n主な議論\n製造業（最優先案）\n\n＜前向き＞ 「今期の受注増」と「法改正の追い風」が重なるのは確かに強い。筋が通っており、投下の社内説明もしやすい。\n＜懸念＞ 法改正需要が一過性のスパイクか、持続する需要かで意味が全く変わる。一過性なら、リソースを寄せた後に需要が引いて梯子を外されるリスク。\n＜懸念＞ 根拠が営業1名のインタビューに依存。競合も同じ法改正を見ているはずで、需要があっても価格競争で利益が削られかねない。市場規模と競合動向の裏取りが必要。\n＜懸念＞ 製造業の受注率・単価が未確認。受注が「量」で伸びても「単価」が落ちていれば、売上最大化の絵が変わる。\n\nサービス業（次点案）\n\n＜前向き＞ 受注率が上がっているなら、同じ工数で受注に変わりやすい＝投資効率の観点では魅力的。\n＜懸念＞ 受注率上昇がどの母数からの上昇かが不明。母数が小さいと過大評価になる。絶対値（件数・金額）で確認したい。\n\n小売業（撤退案）\n\n＜懸念＞ 受注減・単価減は事実だが、1データ点での全面撤退は早計。撤退は関係性・評判のコストがあり後戻りしにくい。\n＜視点＞ 小売の中にも収益が残るサブセグメントがあるかもしれない。一括りに切らず、内訳を見て「縮小」と「撤退」を分ける。\n\nリソースの前提\n\n＜懸念＞ 配分を議論する前に、製造業に対応できる人員・知見が社内にあるかを確認する必要。再配分は摩擦なく進まない。\n\nネクストアクション\n#アクション担当期限1全セグメント×（伸び縮み・受注率・単価）マトリクスを作成外山〜X/X2法改正需要の「持続性・市場規模・競合動向」を調査（営業インタビュー追加＋デスクリサーチ）外山〜X/X3サービス業の受注率上昇を絶対値（件数・金額・母数）で再確認外山〜X/X4小売業の内訳分析と、「縮小／撤退」の定量基準を設定外山〜X/X5製造業対応の社内ケイパビリティ（人員・知見）を確認ヤマダ・外山〜X/X6上記を踏まえたリソース再配分案＋売上シミュレーション外山〜X/X\n継続検討事項\n\n法改正需要が一過性だった場合の、バックアップ・セグメントをどこに置くか\n「捨てる」判断の社内決裁プロセス（誰が・どの基準で決めるか）＝ ヤマダにて整理",
+    "feedback": "大方針（製造業を最優先）の方向性自体は支持された一方、火が集中したのは「根拠の薄さ」でした。\n\n製造業の根拠が営業1名のインタビューに依存。法改正需要が「一過性のスパイク」か「持続する需要」か未検証で、一過性ならリソースを寄せた後に梯子を外されるリスク。\n競合も同じ法改正を見ているはずで、需要があっても価格競争で利益が削られかねない。市場規模・競合動向の裏取りがない。\n受注率・単価が全セグメントで未確認。受注が「量」で伸びても「単価」が落ちていれば、売上最大化の絵が崩れる。\nサービス業の受注率上昇は母数が不明。母数が小さいと過大評価で、絶対値（件数・金額）で見ないと判断できない。\n小売業の全面撤退は1データ点で早計。撤退は関係性・評判のコストで後戻りしにくく、収益が残るサブセグメントを一括りに切り捨てる懸念。\nリソース配分を語る前に、製造業に対応できる人員・知見が社内にあるか未確認。前提が崩れれば配分論そのものが成立しない。",
+    "next": "タスクの裏にある「答えるべき論点」を主語にして並べ直しました。\n\n【製造業への賭けは堅いか】 法改正需要は一過性か持続的か、規模・競合はどうか── 営業インタビュー追加＋デスクリサーチで裏取りし、「条件付き合意」を正式決定に切り替えられるかを見極める。\n【量で伸びているのか、単価込みで伸びているのか】 全セグメント×（伸び縮み・受注率・単価）のマトリクスを揃えたとき、売上最大化の最適配分はどう描けるか。\n【サービス業は本当に投資効率が高いのか】 受注率上昇は母数の小ささによる見かけか、絶対値でも効率が高いと言えるか。\n【小売は「縮小」か「撤退」か】 両者を分ける定量基準は何か、収益が残るサブセグメントはあるか── 内訳分析で線引きの基準そのものをつくる。\n【そもそも寄せられるのか】 製造業に対応できる人員・知見が社内にあるか。なければ配分論の前提が崩れる（ヤマダ・外山）。\n【で、結局どう配るのか】 上記が揃ったとき、リソース再配分案と売上シミュレーションはどの配分を指すか。\n\nさらに先に控える論点（継続検討）：\n\n【賭けが外れたときの逃げ道】 法改正需要が一過性だった場合、バックアップ・セグメントをどこに置くか。\n【誰が・どの基準で「捨てる」を決めるか】 撤退・縮小の社内決裁プロセス（ヤマダにて整理）。"
+  }
+ });
+}
+function flattenSubs(sub){var out=[];(sub||[]).forEach(function(s,i){var kids=(s.children||[]).filter(function(c){return (c.text||'').trim();});out.push({id:s.id,text:s.text,level:1,tag:"サ"+(i+1),hasKids:kids.length>0,linkable:kids.length===0});(s.children||[]).forEach(function(c,j){out.push({id:c.id,text:c.text,level:2,tag:"サ"+(i+1)+"-"+(j+1),hasKids:false,linkable:true});});});return out;}
+function isResearch(c){return !!(c&&c.isResearchTask);}
+// サブ論点 ⇔ テキスト（1行=1サブ論点／行頭スペース2つ＋「- 」でサブサブ論点）
+function buildSubText(c){var lines=[];var r=((c.ronten&&c.ronten.text)||'').trim();if(r)lines.push('# '+r);(c.subRonten||[]).forEach(function(s){lines.push('- '+(s.text||''));(s.children||[]).forEach(function(ch){lines.push('  - '+(ch.text||''));});});return lines.join('\n');}
+function parseSubText(txt){var subs=[],cur=null,ronten=null;String(txt==null?'':txt).split(/\r?\n/).forEach(function(raw){if(!raw.trim())return;var hm=raw.match(/^\s*#\s*(.*)$/);if(hm){if(ronten===null){var rt=hm[1].trim();if(rt)ronten=rt;}return;}var indent=(raw.match(/^[\t ]*/)[0]).replace(/\t/g,'  ').length;var text=raw.replace(/^[\t ]+/,'').replace(/^[-*・•]\s*/,'').trim();if(!text)return;if(indent>=2&&cur){cur.children.push({id:uid(),text:text});}else{cur={id:uid(),text:text,children:[]};subs.push(cur);}});return {ronten:ronten,subs:subs};}
+function getLinks(t){return (t.linkIds&&t.linkIds.length)?t.linkIds:(t.linkId?[t.linkId]:[]);}
+function getPreds(t){return (t.predecessorIds&&t.predecessorIds.length)?t.predecessorIds:(t.predecessorId?[t.predecessorId]:[]);}
+function normalizeSchedule(list){var arr=list.map(function(t){var o={};for(var k in t)o[k]=t[k];return o;});var byId={};arr.forEach(function(t){byId[t.id]=t;});for(var pass=0;pass<=arr.length;pass++){var ch=false;arr.forEach(function(t){var preds=getPreds(t);if(preds.length){var minS=null;preds.forEach(function(pid){var pr=byId[pid];if(pr){var pe=parseDate(pr.end);if(pe){var cand=addDays(pe,1);if(!minS||cand>minS)minS=cand;}}});if(minS){var ts=parseDate(t.start);if(!ts||ts<minS){t.start=fmtISO(minS);ch=true;}}}});if(!ch)break;}return arr;}
+function buildContext(c){
+ var L=[];L.push("【論点】",c.ronten.text||"(未入力)","");
+ L.push("【サブ論点】");(c.subRonten||[]).forEach(function(s,i){L.push((i+1)+". "+(s.text||"(未入力)"));(s.children||[]).forEach(function(ch,j){if(ch.text)L.push("   "+(i+1)+"-"+(j+1)+". "+ch.text);});});
+ var st={};flattenSubs(c.subRonten).forEach(function(o){st[o.id]=o.tag+":"+o.text;});
+ L.push("","【タスク（→対応サブ論点）】");if(!(c.tasks||[]).length)L.push("(なし)");
+ (c.tasks||[]).forEach(function(t){var lk=getLinks(t).map(function(id){return st[id];}).filter(Boolean).join(" / ");L.push("・"+(t.text||"(無題)")+(lk?"（→ "+lk+"）":""));});
+ L.push("","【作業結果】");var any=false;
+ (c.tasks||[]).forEach(function(t){if((t.result||'').trim()){L.push("・["+(t.text||"タスク")+"] "+t.result.trim());any=true;}});
+ if(!any)L.push("(なし)");
+ return L.join("\n");
+}
+var IMG_TPL='#画像生成AIモデル**gpt-image-2**のモデルを必ず利用すること\n# 用途（厳守）\n- この画像はPowerPointスライドに貼り付けて使用する\n- **タイトルは画像内に含めないこと**（スライド側で別途付与する）\n- キャンバス全面をコンテンツ領域として最大限活用すること\n# コンテンツ密度（厳守）\n- この画像は「ビジュアルワンペーパー」として、1枚で内容の全体像が把握できる情報密度で構成すること\n- 情報の階層構造を視覚的に表現すること（例：セクション分け、矢印フロー、アイコン付きラベル等）\n- キャンバスを最大限コンテンツで埋めること\n- 余白は「読みやすさ確保」の最低限にとどめること\n# デザイン仕様（厳守）\n- フォント：Meiryo UI（すべてのテキストに適用）\n- テキストカラー：#4c4948（本文テキストのみ）\n- 背景：白（#FFFFFF）で統一し、スライドとの一体感を確保すること\n- 画像の最外周にボーダー・枠線・フレーム・影・装飾線を一切描画しないこと\n- キャンバスの端まで背景色（#FFFFFF）がそのまま続くこと\n- 装飾・強調カラーは以下の優先順位で使い分けること：\n  優先度1：**#12b3c7(RGB: 18, 179, 199)** → 枠線・図表の基調色・ラベル見出し（最多使用）\n  優先度2：**#D74C77(RGB: 215, 76, 119)** → 決定事項・警告・重要事項など強調箇所（要所で使用）\n  優先度3：**#8B7CBA(RGB: 139, 124, 186)**→ 補足・注釈（控えめに使用）\n　**上記以外のカラーは利用しないこと**\n# 画像サイズ・アスペクト比（厳守）\n- アスペクト比：3:2（横長）\n- 出力ピクセル：1536×1024\n- キャンバス全体をこのサイズで構成し、余白やクロップで比率を変えないこと\n# 出力後の追加アクション（厳守）\n画像生成が完了したら、以下の情報をテキストで出力すること：\n- **スライドタイトル案**：画像の内容を表すタイトル（20文字以内）を3案提示\n#作成画像の内容：';
+
+/* ===== state ===== */
+var state={cases:[],selectedId:null,modal:null,reporting:false};
+function migrateCases(){state.cases.forEach(function(c){var byId={};(c.tasks||[]).forEach(function(t){byId[t.id]=t;});
+ (c.tasks||[]).forEach(function(t){if(t.successorId){var su=byId[t.successorId];if(su){su.predecessorIds=su.predecessorIds||[];if(su.predecessorIds.indexOf(t.id)<0)su.predecessorIds.push(t.id);}delete t.successorId;}});
+ (c.tasks||[]).forEach(function(t){if(!t.predecessorIds)t.predecessorIds=[];if(t.predecessorId){if(t.predecessorIds.indexOf(t.predecessorId)<0)t.predecessorIds.push(t.predecessorId);delete t.predecessorId;}});
+ // タスク管理層のフィールド補完（旧データ対応）
+ if(c.importance==null)c.importance="low";
+ if(c.urgencyOverride===undefined)c.urgencyOverride=null;
+ if(!c.taskStatus)c.taskStatus=(c.stepDone&&c.stepDone.discussion)?"done":"todo";
+ if(c.planDate==null)c.planDate="";
+ if(c.isResearchTask==null)c.isResearchTask=false;
+ // 旧データ整合：3階層目除去、親linkId→子(葉)付け替え、作業結果/完了の正規化、廃止フィールド除去
+ (c.subRonten||[]).forEach(function(s){(s.children||[]).forEach(function(ch){if(ch&&ch.children)delete ch.children;});});
+ var leafMap={};(c.subRonten||[]).forEach(function(s){var kids=(s.children||[]).filter(function(ch){return (ch.text||'').trim();});if(kids.length)leafMap[s.id]=kids.map(function(ch){return ch.id;});});
+ (c.tasks||[]).forEach(function(t){
+  if(typeof t.result==='undefined')t.result='';
+  t.done=!!t.done;
+  delete t.mentality;delete t.materials;delete t.research;
+  if(t.linkIds&&t.linkIds.length){var nl=[];t.linkIds.forEach(function(id){if(leafMap[id]){leafMap[id].forEach(function(cid){if(nl.indexOf(cid)<0)nl.push(cid);});}else if(nl.indexOf(id)<0)nl.push(id);});t.linkIds=nl;}
+ });
+ if(c.discussion){delete c.discussion.noTossOver;delete c.discussion.wordBased;}
+ if(c.output&&c.output.checks)delete c.output.checks.closePpt;
+});}
+function load(){var found=false;try{var raw=window.localStorage&&window.localStorage.getItem(STORE_KEY);if(raw){var a=JSON.parse(raw);if(Array.isArray(a)){state.cases=a;found=true;}}}catch(e){}migrateCases();if(!found&&!state.cases.length){state.cases=[sampleCase()];save();}}
+function save(){try{if(window.localStorage)window.localStorage.setItem(STORE_KEY,JSON.stringify(state.cases));}catch(e){}}
+function sel(){return state.cases.filter(function(c){return c.id===state.selectedId;})[0];}
+function progress(c){var n=0;for(var k in c.stepDone)if(c.stepDone[k])n++;return n;}
+/* ===== task management (Eisenhower) ===== */
+function todayDate(){var n=new Date();return new Date(n.getFullYear(),n.getMonth(),n.getDate());}
+function isTaskDone(c){return (c.taskStatus||"todo")==="done";}
+function isImportant(c){return c.importance==="high";}
+function isUrgent(c){
+ if(isTaskDone(c))return false;
+ if(c.urgencyOverride==="high")return true;
+ if(c.urgencyOverride==="low")return false;
+ var D=parseDate(c.deadline);if(!D)return false;
+ var t=todayDate();if(D<t)return true; // 超過は緊急
+ return countBizDays(t,D)<=URGENT_BIZ_DAYS;
+}
+function quadrant(c){var u=isUrgent(c),im=isImportant(c);return im?(u?"q1":"q2"):(u?"q3":"q4");}
+function quadRank(c){return {q1:0,q2:1,q3:2,q4:3}[quadrant(c)];}
+function statusInfo(c){return ({todo:["未着手","todo"],doing:["進行中","doing"],hold:["保留","hold"],done:["完了","done"]})[c.taskStatus||"todo"];}
+function deadlineInfo(c){
+ if(!c.deadline)return {text:"締切なし",cls:"todo"};
+ if(isTaskDone(c))return {text:"締切 "+c.deadline,cls:"todo"};
+ var D=parseDate(c.deadline),t=todayDate();
+ if(D<t)return {text:"締切超過",cls:"over"};
+ var n=countBizDays(t,D);
+ return {text:n===0?"本日締切":"残り"+n+"営業日",cls:n<=URGENT_BIZ_DAYS?"urg":"todo"};
+}
+function caseById(id){return state.cases.filter(function(x){return x.id===id;})[0];}
+
+/* ===== helpers for HTML ===== */
+function toggleHtml(act,on,label,extra){return '<button class="toggle'+(on?' on':'')+'" data-click="'+act+'"'+(extra||'')+'><span class="bx">'+(on?ic('check',13):'')+'</span><span>'+esc(label)+'</span></button>';}
+function rontenCtx(text){return text?'<div style="margin-bottom:12px;padding:10px;border-radius:8px;background:#f8fafc;border:1px solid var(--line);color:#475569;font-size:14px"><span class="xsmall muted">論点</span><br>'+esc(text)+'</div>':'';}
+
+/* ===== views ===== */
+function render(){
+ var root=document.getElementById('root');
+ if(state.reporting&&sel()){root.innerHTML=viewReport(sel());bindInputs();return;}
+ var html='';
+ html+='<div class="hdr"><div class="hdr-in">';
+ html+='<button class="logo" data-click="home"><span class="mk">ロサ</span><span><span class="t1">ロ→サ→T→ス→作→ア</span><br><span class="t2">論点思考ワークフロー（ローカル版・完全オフライン）</span></span></button>';
+ html+='<div class="row gap2">';
+ html+='<button class="btn btn-line btn-sm" data-click="manual">'+ic('book')+'<span>操作マニュアル</span></button>';
+ html+='<button class="btn btn-line btn-sm" data-click="import">'+ic('ul')+'<span>読み込み</span></button>';
+ html+='<button class="btn btn-dark btn-sm" data-click="export">'+ic('dl')+'<span>書き出し</span></button>';
+ html+='</div></div></div>';
+ html+='<main><div class="wrap">'+(sel()?viewDetail(sel()):viewList())+'</div></main>';
+ if(!sel()){var foot='<div class="banner" style="background:#f8fafc;border:1px solid var(--line);color:var(--mut2)">'+ic('alert',16)+'<span>このアプリは<b>完全オフライン</b>で動作し、案件データはこのブラウザ内（localStorage）にのみ保存されます。<b>外部送信は一切ありません。</b>確実に残すには、右上の「書き出し」でJSONをバックアップし、「読み込み」で復元してください。</span></div>';html+='<div class="wrap foot">'+foot+'</div>';}
+ if(state.modal)html+=viewModal();
+ root.innerHTML=html;
+ bindInputs();
+}
+
+function taskCardHtml(c){
+ var segs='';STEPS.forEach(function(s){segs+='<i style="background:'+(c.stepDone[s.key]?'#34d399':'var(--line)')+'"></i>';});
+ var di=deadlineInfo(c),si=statusInfo(c),tIso=fmtISO(todayDate());
+ var today=(c.planDate===tIso);
+ var h='<div class="tcard">';
+ h+='<div class="row between center" style="gap:8px"><button class="tctitle" data-click="open" data-id="'+c.id+'">'+esc(c.title||"（無題のタスク）")+'</button>';
+ h+='<button class="star '+(isImportant(c)?'on':'off')+'" data-click="impToggle" data-id="'+c.id+'" title="重要度（クリックで切替）">'+(isImportant(c)?'★':'☆')+'</button></div>';
+ h+='<div class="row gap2 wrapf" style="margin-top:5px">';
+ h+='<span class="badge '+si[1]+'">'+si[0]+'</span>';
+ h+='<span class="badge '+di.cls+'">'+ic('clock',11)+di.text+'</span>';
+ if(isUrgent(c))h+='<span class="badge urg">緊急</span>';
+ if(isResearch(c))h+='<span class="badge research">リサーチ</span>';
+ if(c.requester)h+='<span class="xsmall muted">依頼:'+esc(c.requester)+'</span>';
+ h+='</div>';
+ h+='<div class="seg" style="margin-top:7px">'+segs+'</div>';
+ h+='<div class="row between wrapf gap2" style="margin-top:9px">';
+ h+='<div class="row gap2 center">';
+ h+='<select class="inp inp-sm" data-act="cStatus" data-id="'+c.id+'" data-render="1">'+['todo','doing','hold','done'].map(function(k){var lbl={todo:'未着手',doing:'進行中',hold:'保留',done:'完了'}[k];return '<option value="'+k+'" '+((c.taskStatus||'todo')===k?'selected':'')+'>'+lbl+'</option>';}).join('')+'</select>';
+ h+='<button class="btn btn-line btn-sm'+(today?' on-today':'')+'" data-click="todayToggle" data-id="'+c.id+'">'+(today?'今日やる ✓':'今日やる')+'</button>';
+ h+='<button class="btn btn-line btn-sm'+(isResearch(c)?' on-research':'')+'" data-click="researchToggle" data-id="'+c.id+'" title="リサーチタスクとして印を付ける（一覧で絞り込めます）">'+(isResearch(c)?'リサーチ ✓':'リサーチ')+'</button>';
+ h+='</div>';
+ h+='<div class="row gap2 center">';
+ h+='<button class="icon-x" data-click="del" data-id="'+c.id+'">'+ic('trash',14)+'</button>';
+ h+='</div></div></div>';
+ return h;
+}
+function viewList(){
+ var t=todayDate(),tIso=fmtISO(t);
+ var active=state.cases.filter(function(c){return !isTaskDone(c);});
+ var done=state.cases.filter(isTaskDone);
+ if(_researchFilter&&!state.cases.some(isResearch))_researchFilter=false;
+ if(_researchFilter){active=active.filter(isResearch);done=done.filter(isResearch);}
+ function byDeadline(a,b){var A=parseDate(a.deadline),B=parseDate(b.deadline);if(A&&B)return A-B;if(A)return -1;if(B)return 1;return 0;}
+ var todays=active.filter(function(c){if(c.planDate===tIso)return true;var D=parseDate(c.deadline);if(D&&(D<t||fmtISO(D)===tIso))return true;return isUrgent(c);})
+   .sort(function(a,b){return (quadRank(a)-quadRank(b))||byDeadline(a,b);});
+ var h='';
+ // toolbar
+ h+='<div class="row gap2 wrapf center mb3">';
+ h+='<button class="btn btn-outline" data-click="slide">'+ic('img')+'<span>フレーム図解</span></button>';
+ h+='<button class="btn btn-outline" data-click="manual">'+ic('book')+'<span>使い方マニュアル</span></button>';
+ h+='<button class="btn btn-outline" data-click="sources">'+ic('book')+'<span>出典</span></button>';
+ if(state.cases.some(isResearch))h+='<button class="btn btn-outline'+(_researchFilter?' on-research':'')+'" data-click="researchFilterToggle" title="リサーチタスクだけを表示">'+ic('spark',15)+'<span>'+(_researchFilter?'リサーチのみ ✓':'リサーチのみ')+'</span></button>';
+ h+='</div>';
+ // greeting
+ var doing=active.filter(function(c){return (c.taskStatus||'todo')==='doing';}).length;
+ var urg=active.filter(isUrgent).length;
+ h+='<div class="dash-greet"><div class="big">'+new Date().toLocaleDateString("ja-JP",{year:'numeric',month:'long',day:'numeric',weekday:'short'})+' のタスク</div>';
+ h+='<div class="sum">今日のタスク <b>'+todays.length+'</b> 件　／　緊急 <b style="color:var(--accent-text)">'+urg+'</b> 件　／　進行中 <b>'+doing+'</b> 件　／　未完了 <b>'+active.length+'</b> 件</div></div>';
+ // header + new
+ h+='<div class="row between mb3 center"><h1 style="font-size:18px;font-weight:700;margin:0">タスク管理</h1><div class="row gap2">';
+ if(state.cases.length===0)h+='<button class="btn btn-line btn-sm" data-click="sample">サンプルを追加</button>';
+ h+='<button class="btn btn-brand btn-sm" data-click="new">'+ic('plus')+'<span>新規タスク</span></button></div></div>';
+ if(state.cases.length===0){
+  h+='<div style="text-align:center;padding:56px 0;color:var(--mut2)"><p>まだタスクがありません。</p><p>仕事の依頼が来たら「新規タスク」から、論点思考で1件を立ち上げましょう。</p></div>';
+  return h;
+ }
+ // 今日のタスク
+ h+='<div class="dash-h2">'+ic('clock',16)+'今日のタスク</div>';
+ if(todays.length===0)h+='<p class="small muted">今日着手するタスクはありません。下のマトリクスで「今日やる」を選ぶか、緊急のものから着手しましょう。</p>';
+ else todays.forEach(function(c){h+=taskCardHtml(c);});
+ // アイゼンハワー
+ h+='<div class="dash-h2">'+ic('spark',16)+'アイゼンハワー・マトリクス（重要度 × 緊急度）</div>';
+ h+='<p class="xsmall muted" style="margin:-4px 0 10px">緊急度は締切までの残り営業日（'+URGENT_BIZ_DAYS+'営業日以下／超過で緊急）から自動判定。重要度は各カードの ★ で切り替え。</p>';
+ var quads=[['q1','第一象限：今すぐやる','重要 × 緊急'],['q2','第二象限：計画してやる（最重要ゾーン）','重要 × 緊急でない'],['q3','第三象限：素早く片付ける・任せる','重要でない × 緊急'],['q4','第四象限：やらない／後回し','重要でない × 緊急でない']];
+ h+='<div class="quad-grid">';
+ quads.forEach(function(q){
+  var list=active.filter(function(c){return quadrant(c)===q[0];}).sort(byDeadline);
+  h+='<div class="quad '+q[0]+'"><h4>'+q[1]+'<span class="xsmall muted" style="font-weight:400">'+q[2]+'</span></h4>';
+  if(list.length===0)h+='<p class="xsmall muted">—</p>';else list.forEach(function(c){h+=taskCardHtml(c);});
+  h+='</div>';
+ });
+ h+='</div>';
+ // 完了タスク
+ if(done.length){
+  h+='<div class="dash-h2">'+ic('circleChk',16)+'完了タスク（'+done.length+'）<button class="btn-ghost btn-sm" data-click="showDone" style="font-weight:400">'+(_showDone?'隠す':'表示')+'</button></div>';
+  if(_showDone)done.sort(byDeadline).forEach(function(c){h+=taskCardHtml(c);});
+ }
+ return h;
+}
+
+function viewDetail(c){
+ var step=STEPS[c.currentStep];var locked=step.key!=="ronten";
+ var h='';
+ h+='<div class="row between mb3"><button class="btn-ghost" data-click="back">'+ic('aL')+'<span>一覧へ</span></button><div class="row gap3"><button class="btn-ghost" style="color:var(--brand);font-weight:500" data-click="report">'+ic('print',15)+'<span>レポート</span></button><button class="btn-ghost" data-click="del" data-id="'+c.id+'">'+ic('trash',15)+'<span>削除</span></button></div></div>';
+ // case header
+ h+='<div class="card">';
+ if(locked)h+='<div class="row gap2 xsmall muted mb2">'+ic('lock',12)+'<span>案件情報は「ロ（論点）」ページでのみ編集できます。</span></div>';
+ h+='<div class="field"><label class="lbl">案件名（依頼の一言）</label><textarea class="inp" rows="2" data-act="cTitle" '+(locked?'disabled':'')+' placeholder="例：来期の営業戦略を整理してほしい">'+esc(c.title)+'</textarea></div>';
+ h+='<div class="grid2">';
+ h+='<div class="field" style="margin:0"><label class="lbl">依頼者</label><input class="inp" data-act="cReq" value="'+esc(c.requester)+'" '+(locked?'disabled':'')+' placeholder="例：部長"></div>';
+ h+='<div class="field" style="margin:0"><label class="lbl">締切</label><input class="inp" type="date" data-act="cDead" data-render="1" value="'+esc(c.deadline)+'" '+(locked?'disabled':'')+'></div>';
+ h+='</div>';
+ h+='<div class="field" style="margin:16px 0 0"><label class="lbl">依頼内容メモ</label><textarea id="cMemoTa" class="inp" rows="10" data-act="cMemo" '+(locked?'disabled':'')+' placeholder="言われた言葉をそのまま">'+esc(c.requestMemo)+'</textarea></div>';
+ h+='</div>';
+ // stepper
+ h+='<div class="card" style="overflow-x:auto"><div class="stepper">';
+ STEPS.forEach(function(s,i){
+  var cls="step"+(i===c.currentStep?" on":(c.stepDone[s.key]?" done":""));
+  h+='<button class="'+cls+'" data-click="go" data-i="'+i+'"><span class="k">'+s.short+'</span><span class="l">'+s.label+'</span>'+((c.stepDone[s.key]&&i!==c.currentStep)?'<span class="dot">'+ic('check',12)+'</span>':'')+'</button>';
+  if(i===1)h+='<div class="stepdiv" title="ロ・サ（論点思考）で問いを固めてから、T以降（実行）へ進む。いきなりTに飛ばない。"><span class="bar"></span></div>';
+ });
+ h+='</div></div>';
+ // body
+ h+='<div class="card"><div class="row gap2 center" style="margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid #f1f5f9"><div style="width:36px;height:36px;border-radius:8px;background:var(--brand-soft);color:var(--brand);display:flex;align-items:center;justify-content:center;font-weight:700">'+step.short+'</div><div><div class="bold">'+step.short+'（'+step.label+'）― '+step.sub+'</div><div class="xsmall muted">成果物：'+step.deliverable+'</div></div></div>';
+ h+=stepBody(c,step.key);
+ // nav
+ h+='<div class="row between mt4" style="padding-top:16px;border-top:1px solid #f1f5f9">';
+ h+='<button class="btn-ghost" data-click="prev" '+(c.currentStep===0?'disabled style="opacity:.3"':'')+'>'+ic('aL',15)+'<span>戻る</span></button>';
+ if(c.currentStep<STEPS.length-1){
+  h+='<button class="btn btn-brand" data-click="next">確認して次へ：'+STEPS[c.currentStep+1].short+'（'+STEPS[c.currentStep+1].label+'） '+ic('aR',15)+'</button>';
+ }else{
+  h+='<div class="row gap2"><button class="btn btn-outline" data-click="report">'+ic('print',15)+'<span>レポート</span></button><button class="btn btn-emerald" data-click="complete">'+ic('circleChk',16)+'<span>案件を完了して一覧へ</span></button></div>';
+ }
+ h+='</div></div>';
+ return h;
+}
+
+function stepBody(c,k){
+ if(k==="ronten")return stepRonten(c);
+ if(k==="sub")return stepSub(c);
+ if(k==="task")return stepTask(c);
+ if(k==="schedule")return stepSchedule(c);
+ if(k==="work")return stepWork(c);
+ if(k==="output")return stepOutput(c);
+ if(k==="discussion")return stepDiscussion(c);
+ return '';
+}
+function guide(html){return '<div class="guide">'+ic('bulb',16)+'<div>'+html+'</div></div>';}
+
+function stepRonten(c){
+ var r=c.ronten;var h=guide('まず<b>「この依頼で最終的に答えるべき問いは何か？」</b>を<b>一文</b>に言語化する。これが論点。<b>セルフチェック3つを満たすまでサブ論点へは進めません。</b>');
+ h+='<div class="field"><label class="lbl">論点（解くべき問いを一文で）</label><textarea class="inp" rows="5" data-act="rText" placeholder="例：限られたリソースをどの顧客に集中すれば売上を最大化できるか？">'+esc(r.text)+'</textarea><div class="hint">「〜を作る」ではなく「〜は何か？／どうすべきか？」という問いの形に。</div></div>';
+ h+='<p class="lbl">セルフチェック（すべて必須）</p><div style="display:flex;flex-direction:column;gap:8px">';
+ h+=toggleHtml("rc_isQuestion",r.checks.isQuestion,"「作業」ではなく「問い」の形になっている");
+ h+=toggleHtml("rc_matchesGoal",r.checks.matchesGoal,"依頼者の本当のゴールと一致している（言葉の裏側を確認した）");
+ h+=toggleHtml("rc_oneSentence",r.checks.oneSentence,"一文で言い切れる");
+ h+='</div>';return h;
+}
+function stepSub(c){
+ var h=guide('<b>「この論点に答えるには、どんな問いを解けばよいか？」</b>を MECE に分解。サブサブへ深掘りするとアウトプットが進化する。');
+ h+=rontenCtx(c.ronten.text);
+ h+='<div style="display:flex;flex-direction:column;gap:10px">';
+ c.subRonten.forEach(function(s,i){
+  h+='<div style="border:1px solid var(--line);border-radius:8px;padding:10px">';
+  h+='<div class="row gap2"><span class="bold xsmall" style="width:28px;flex:0 0 auto;color:var(--brand)">サ'+(i+1)+'</span><input class="inp" data-act="sText" data-id="'+s.id+'" value="'+esc(s.text)+'" placeholder="サブ論点を入力"><button class="icon-x" data-click="delSub" data-id="'+s.id+'">'+ic('trash',15)+'</button></div>';
+  h+='<div style="padding-left:36px;margin-top:8px;display:flex;flex-direction:column;gap:8px">';
+  (s.children||[]).forEach(function(ch){h+='<div class="row gap2"><span class="xsmall" style="color:#cbd5e1;flex:0 0 auto">└</span><input class="inp" data-act="scText" data-pid="'+s.id+'" data-cid="'+ch.id+'" value="'+esc(ch.text)+'" placeholder="サブサブ論点（任意）"><button class="icon-x" data-click="delChild" data-pid="'+s.id+'" data-cid="'+ch.id+'">'+ic('trash',14)+'</button></div>';});
+  h+='<button class="btn-ghost xsmall" style="color:var(--brand);padding:0" data-click="addChild" data-id="'+s.id+'">'+ic('plus',12)+'<span>サブサブ論点を追加</span></button>';
+  h+='</div></div>';
+ });
+ h+='</div><button class="dash mt3" data-click="addSub">'+ic('plus',15)+'<span>サブ論点を追加</span></button>';
+ h+='<div class="mt4" style="padding-top:14px;border-top:1px dashed var(--line)">';
+ h+='<div class="row between gap2" data-click="subEditorToggle" style="cursor:pointer;padding:4px 0"><span class="small bold" style="color:#334155">テキストで一括編集（書き出し／読み込み）</span><span style="flex:0 0 auto;color:var(--mut2)">'+ic(_subEditorOpen?'up':'down',16)+'</span></div>';
+ if(_subEditorOpen){
+  h+='<div class="mt2">';
+  h+='<div class="row gap2 mb2"><button class="btn btn-line btn-sm" data-click="exportSub">'+ic('dl',13)+'<span>書き出し</span></button><button class="btn btn-line btn-sm" data-click="importSub">'+ic('ul',13)+'<span>読み込み</span></button></div>';
+  h+='<div class="xsmall muted mb2">論点・サブ論点・サブサブ論点をまとめてテキストで編集（「書き出し」→ 編集 →「読み込み」で反映）。先頭「# 」で論点、1行＝1サブ論点、行頭にスペース2つ＋「- 」でサブサブ論点。</div>';
+  h+='<textarea id="subtextin" class="inp" data-act="subText" rows="10" placeholder="例：&#10;# 製造業に賭けるべきか？（論点）&#10;- 製造業への賭けは堅いか&#10;  - 法改正需要は一過性か持続的か&#10;  - 競合・市場規模はどうか&#10;- 量で伸びているか、単価込みで伸びているか" style="width:100%;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;line-height:1.6;resize:vertical">'+esc(_subText)+'</textarea>';
+  h+='</div>';
+ }
+ h+='</div>';
+ h+='<div class="mt4" style="padding-top:16px;border-top:1px solid #f1f5f9"><div class="banner banner-accent mb3">'+ic('alert',16)+'<span><b>サブ論点を詰めずに TASK へ進まない。</b>「何を解くか」を固め、<b>依頼者と内容を合意</b>してから次（T）へ。</span></div>';
+ h+=toggleHtml("subAgree",!!c.subAgreed,"依頼者とサブ論点の内容について合意を得た")+'</div>';
+ return h;
+}
+function stepTask(c){
+ var opts=flattenSubs(c.subRonten).filter(function(o){return o.text.trim();});
+ var h=guide('<b>「論点・サブ論点を解くために必要なTASKは？」</b>と自問して設計。<b>解くサブ論点にチェック</b>→<b>タスク名を入力して「タスクを追加」</b>。1タスクで複数サブ論点もOK。<b>すべてのサブ論点にタスクを割り当てるまでスケジュールへ進めません。</b>');
+ h+=rontenCtx(c.ronten.text);
+ if(opts.length===0){h+='<p class="small" style="color:var(--accent)">先に「サ（サブ論点）」を入力してください。</p>';return h;}
+ // A. サブ論点（チェックボックス＋T番号タグ）
+ h+='<div style="margin-bottom:12px;padding:10px;border-radius:8px;background:#f8fafc;border:1px solid var(--line)"><div class="xsmall muted mb2">サブ論点（解く対象をチェック → 下でタスク名を入力して追加）</div>';
+ opts.forEach(function(o){
+  var tnums=[];c.tasks.forEach(function(t,idx){if(getLinks(t).indexOf(o.id)>=0)tnums.push(idx+1);});
+  var badges=tnums.map(function(n){return '<span class="chip on" style="padding:1px 7px;font-size:11px;cursor:default">T'+n+'</span>';}).join(' ');
+  if(o.linkable===false){h+='<div class="small" style="margin-left:'+(o.level===2?16:0)+'px;color:#334155;line-height:1.9"><b style="color:'+(o.level===2?TERTIARY:BRAND)+'">'+o.tag+'</b> '+esc(o.text)+' <span class="xsmall muted">サブサブ論点で紐付け（対象外）</span></div>';return;}
+  var sel=!!_taskSel[o.id];
+  h+='<div class="row gap2" style="margin-left:'+(o.level===2?16:0)+'px;align-items:flex-start;line-height:1.9">'
+    +'<span data-click="taskSel" data-sid="'+o.id+'" title="解く対象に選択" style="flex:0 0 auto;cursor:pointer;margin-top:3px;width:16px;height:16px;border:1.5px solid '+(sel?'var(--brand)':'var(--line2)')+';border-radius:4px;background:'+(sel?'var(--brand)':'#fff')+';color:#fff;display:inline-flex;align-items:center;justify-content:center">'+(sel?ic('check',12):'')+'</span>'
+    +'<span class="small" style="color:#334155"><b style="color:'+(o.level===2?TERTIARY:BRAND)+'">'+o.tag+'</b> '+esc(o.text)+' '+(tnums.length?badges:'<span class="xsmall" style="color:var(--accent)">未割当</span>')+'</span></div>';
+ });
+ h+='</div>';
+ // B. タスク作成フォーム
+ var selCount=opts.filter(function(o){return _taskSel[o.id];}).length;
+ var editing=!!_taskEditId;
+ h+='<div style="border:1px solid var(--line);border-radius:8px;padding:12px;margin-bottom:12px">';
+ h+='<div class="row gap2"><input class="inp" data-act="taskName" value="'+esc(_taskName)+'" placeholder="タスク名（例：過去3年の受注データを集計し傾向を出す）"><button class="btn btn-brand" data-click="addTaskSel" style="flex:0 0 auto">'+ic(editing?'circleChk':'plus',15)+'<span>'+(editing?'タスクを更新':'タスクを追加')+'</span></button>'+(editing?'<button class="btn btn-line" data-click="taskCancelEdit" style="flex:0 0 auto">キャンセル</button>':'')+'</div>';
+ h+='<p class="xsmall muted mt2">チェックしたサブ論点 '+selCount+' 件を、このタスク名で'+(editing?'更新':'追加')+'します。</p>';
+ h+='</div>';
+ // C. タスク一覧
+ if(c.tasks.length>0){
+  var smap={};opts.forEach(function(o){smap[o.id]=o;});
+  h+='<p class="lbl">タスク一覧</p><div style="display:flex;flex-direction:column;gap:8px">';
+  c.tasks.forEach(function(t,idx){
+   var upDis=idx===0,downDis=idx===c.tasks.length-1;
+   var subTags=getLinks(t).map(function(sid){var o=smap[sid];return o?'<span class="chip" style="padding:1px 7px;font-size:11px;cursor:default"><b>'+o.tag+'</b> '+esc(clip(o.text,18))+'</span>':null;}).filter(Boolean).join(' ');
+   h+='<div style="border:1px solid var(--line);border-radius:8px;padding:12px'+(_taskEditId===t.id?';border-color:var(--brand);background:var(--brand-soft)':'')+'">';
+   h+='<div class="row gap2 between"><div class="row gap2" style="min-width:0"><span class="bold xsmall" style="flex:0 0 auto;color:var(--brand)">T'+(idx+1)+'</span><span class="small bold" style="color:#334155">'+esc(t.text||"（無題のタスク）")+'</span></div>';
+   h+='<div class="row gap2" style="flex:0 0 auto"><button class="btn btn-line btn-sm" data-click="taskEdit" data-id="'+t.id+'">編集</button><button class="btn-ghost" style="padding:2px'+(upDis?';opacity:.3':'')+'" title="上へ移動" data-click="taskUp" data-id="'+t.id+'"'+(upDis?' disabled':'')+'>'+ic('up',16)+'</button><button class="btn-ghost" style="padding:2px'+(downDis?';opacity:.3':'')+'" title="下へ移動" data-click="taskDown" data-id="'+t.id+'"'+(downDis?' disabled':'')+'>'+ic('down',16)+'</button><button class="icon-x" data-click="delTask" data-id="'+t.id+'">'+ic('trash',15)+'</button></div></div>';
+   h+='<div class="wrapf flex mt2" style="gap:4px">'+(subTags||'<span class="xsmall muted">紐付けなし</span>')+'</div>';
+   h+='</div>';
+  });
+  h+='</div>';
+ }
+ return h;
+}
+function stepSchedule(c){
+ var h=guide('各タスクに<b>「誰が？」「いつから・いつまで？」「見積作業時間」</b>を入れる。<b>終了日は締切（'+esc(c.deadline||"未設定")+'）以前のみ</b>。<b>先行タスク</b>を指定すると、このタスクの開始日が先行タスクの終了日の翌日以降に制御される。');
+ if(c.tasks.length===0){h+='<p class="small" style="color:var(--accent)">先に「T（TASK）」でタスクを入力してください。</p>';return h;}
+ var bufVal=(c.bufferBizDays!=null&&c.bufferBizDays!=='')?c.bufferBizDays:'';
+ var bufDef=defaultBuffer(c);
+ h+='<div class="row gap2 center wrapf mb3"><button class="btn btn-outline btn-sm" data-click="autoSchedule">'+ic('cal',15)+'<span>締切から開始日・終了日を自動設定</span></button>';
+ h+='<label class="lblsm" style="flex:0 0 auto">バッファ営業日数</label><input class="inp" type="number" min="0" step="1" data-act="sBuffer" data-id="'+c.id+'" data-render="1" value="'+esc(bufVal)+'" placeholder="'+bufDef+'" style="max-width:96px">';
+ h+='<span class="xsmall muted">締切（'+esc(c.deadline||"未設定")+'）から逆算し、営業日（土日祝を除く）で日程を再計算します。最終タスクの終了日は締切の<b>バッファ営業日数</b>だけ手前に置きます（未入力時は締切までの営業日数の10%を切り上げ＝<b>'+bufDef+'営業日</b>）。見積h=1日8h換算・未入力は1営業日、先行タスクの翌営業日以降に着手。開始が本日以前になる場合はエラー（既存の日付は上書き）。</span></div>';
+ var tasks=c.tasks;
+ var owners=[];tasks.forEach(function(t){if(t.owner&&owners.indexOf(t.owner)<0)owners.push(t.owner);});
+ if(_schedOwner&&owners.indexOf(_schedOwner)<0)_schedOwner='';
+ if(owners.length){h+='<div class="row gap2 center wrapf mb3"><label class="lblsm" style="flex:0 0 auto">担当でフィルタ</label><select class="inp" data-act="schedFilter" data-render="1" style="max-width:220px"><option value="">すべての担当</option>'+owners.map(function(o){return '<option value="'+esc(o)+'" '+(_schedOwner===o?'selected':'')+'>'+esc(o)+'</option>';}).join('')+'</select>'+(_schedOwner?'<span class="xsmall muted">「'+esc(_schedOwner)+'」のタスクのみ表示中（ガント・合計も連動）</span>':'')+'</div>';}
+ var shown=_schedOwner?tasks.filter(function(t){return t.owner===_schedOwner;}):tasks;
+ shown.forEach(function(t){
+  var predTasks=getPreds(t).map(function(pid){return tasks.filter(function(x){return x.id===pid;})[0];}).filter(Boolean);
+  var minStart='';predTasks.forEach(function(pr){if(pr.end&&parseDate(pr.end)){var cand=fmtISO(addDays(parseDate(pr.end),1));if(!minStart||cand>minStart)minStart=cand;}});
+  var others=tasks.filter(function(x){return x.id!==t.id;});
+  var invalid=t.start&&t.end&&parseDate(t.end)&&parseDate(t.start)&&parseDate(t.end)<parseDate(t.start);
+  var over=t.end&&c.deadline&&parseDate(t.end)&&parseDate(c.deadline)&&parseDate(t.end)>parseDate(c.deadline);
+  h+='<div style="border:1px solid var(--line);border-radius:8px;padding:10px;margin-bottom:8px">';
+  h+='<p class="small bold" style="color:#334155;margin:0 0 8px">'+esc(t.text||"（無題のタスク）")+'</p>';
+  h+='<div class="grid4">';
+  h+='<div><label class="lblsm">担当</label><input class="inp" data-act="sOwner" data-id="'+t.id+'" value="'+esc(t.owner||"")+'" placeholder="自分 等"></div>';
+  h+='<div><label class="lblsm">見積作業時間(h)</label><input class="inp" type="number" min="0" step="0.5" data-act="sHours" data-id="'+t.id+'" value="'+esc(t.estHours||"")+'" placeholder="2"></div>';
+  h+='<div><label class="lblsm">開始日</label><input class="inp" type="date" data-act="sStart" data-id="'+t.id+'" data-render="1" value="'+esc(t.start||"")+'" '+(minStart?'min="'+esc(minStart)+'"':'')+' '+((t.end||c.deadline)?'max="'+esc(t.end||c.deadline)+'"':'')+'></div>';
+  h+='<div><label class="lblsm">終了日</label><input class="inp" type="date" data-act="sEnd" data-id="'+t.id+'" data-render="1" value="'+esc(t.end||"")+'" '+(t.start?'min="'+esc(t.start)+'"':'')+' '+(c.deadline?'max="'+esc(c.deadline)+'"':'')+'></div>';
+  h+='</div>';
+  h+='<div class="mt2"><label class="lblsm">先行タスク（複数選択可・先行の完了翌日以降に着手）</label>';
+  if(others.length===0)h+='<div class="xsmall muted mt2">（他にタスクがありません）</div>';
+  else{
+   var preds=getPreds(t);
+   h+='<div class="wrapf flex mt2" style="gap:4px">';
+   if(preds.length===0)h+='<span class="xsmall muted">未指定</span>';
+   preds.forEach(function(pid){var po=others.filter(function(x){return x.id===pid;})[0];if(!po)return;h+='<span class="chip on" style="cursor:default">'+esc(clip(po.text||"（無題）",20))+'<span data-click="predToggle" data-id="'+t.id+'" data-sid="'+pid+'" title="外す" style="margin-left:6px;cursor:pointer;font-weight:700">×</span></span>';});
+   h+='</div>';
+   var pOpen=(_predOpen===t.id);
+   h+='<div class="mt2"><button class="btn btn-line btn-sm" data-click="predOpen" data-id="'+t.id+'">'+ic(pOpen?'up':'plus',13)+'<span>先行タスクを追加</span></button>';
+   if(pOpen){
+    var pcand=others.filter(function(o){return preds.indexOf(o.id)<0;});
+    h+='<div style="border:1px solid var(--line);border-radius:8px;padding:8px;margin-top:6px">';
+    h+='<div class="row gap2"><input class="inp inp-sm" data-act="predSearch" data-id="'+t.id+'" value="'+esc(_predQuery)+'" placeholder="タスク名で検索（部分一致）"><button class="btn btn-brand btn-sm" data-click="predAdd" data-id="'+t.id+'" style="flex:0 0 auto">'+ic('plus',13)+'<span>追加</span></button></div>';
+    h+='<div style="max-height:180px;overflow:auto;display:flex;flex-direction:column;gap:2px;margin-top:6px">';
+    if(pcand.length===0)h+='<div class="xsmall muted" style="padding:4px">追加できるタスクがありません。</div>';
+    pcand.forEach(function(o){var nm=o.text||'（無題）';var on=_predPick===o.id;var hide=_predQuery&&nm.toLowerCase().indexOf(_predQuery.toLowerCase())<0;h+='<div data-predrow="'+t.id+'" data-name="'+esc(nm.toLowerCase())+'" data-click="predPick" data-sid="'+o.id+'" class="small" title="'+esc(nm)+'" style="padding:6px 8px;border-radius:6px;cursor:pointer;'+(on?'background:var(--brand-soft);color:var(--brand-dark);font-weight:600;':'')+(hide?'display:none;':'')+'">'+esc(clip(nm,46))+'</div>';});
+    h+='</div></div>';
+   }
+   h+='</div>';
+  }
+  h+='</div>';
+  if(predTasks.length)h+='<p class="xsmall muted mt2">先行タスク（'+predTasks.map(function(pr){return esc(pr.text||"（無題）");}).join("、")+'）の終了の翌日以降に開始するよう制御されます。</p>';
+  if(invalid)h+='<p class="xsmall" style="color:var(--accent);margin-top:4px">終了日が開始日より前になっています。</p>';
+  if(over)h+='<p class="xsmall" style="color:var(--accent);margin-top:4px">締切（'+esc(c.deadline)+'）より後の終了日は設定できません。</p>';
+  h+='</div>';
+ });
+ h+='<div class="row gap2 mt4 mb2">'+ic('cal',15)+'<span class="small bold" style="color:#334155">スケジュール表（ガントチャート）</span></div>';
+ h+=gantt(shown);
+ var total=shown.reduce(function(a,t){return a+(parseFloat(t.estHours)||0);},0);
+ h+='<div class="row gap2" style="justify-content:flex-end;color:var(--muted);font-size:14px;padding-top:12px">'+ic('clock',15)+'<span>合計見積作業時間：<b style="color:#334155">'+total+'h</b></span></div>';
+ return h;
+}
+function gantt(tasks){
+ var v=[];(tasks||[]).forEach(function(t){var s=parseDate(t.start),e=parseDate(t.end);if(s&&e&&e>=s)v.push({t:t,s:s,e:e});});
+ v.sort(function(a,b){return a.s-b.s;});
+ if(v.length===0)return '<p class="small muted">各タスクに開始日・終了日を入力すると、ここにスケジュール表が表示されます。</p>';
+ var min=new Date(Math.min.apply(null,v.map(function(x){return x.s.getTime();})));
+ var max=new Date(Math.max.apply(null,v.map(function(x){return x.e.getTime();})));
+ // 営業日（土日祝を除く）ベースで軸を構成。min から d までの営業日数（両端含む）を数える
+ function bizOrdinal(d){var x=new Date(min.getTime());var k=0;while(x<=d){if(isBiz(x))k++;x=addDays(x,1);}return k;}
+ var total=Math.max(1,bizOrdinal(max));
+ var h='<div class="gantt"><div class="row between xsmall muted mb2" style="min-width:320px"><span>'+fmtMD(min)+'</span><span>営業日ベース（土日祝を除く・全'+total+'営業日）</span><span>'+fmtMD(max)+'</span></div><div style="display:flex;flex-direction:column;gap:6px;min-width:320px">';
+ v.forEach(function(x){
+  var so=bizOrdinal(x.s),eo=bizOrdinal(x.e);
+  var left=Math.max(0,(so-1)/total)*100,width=Math.max(1,eo-so+1)/total*100;var col=x.t.done?'#34d399':BRAND;
+  h+='<div class="row gap2"><div class="glabel" title="'+esc(x.t.text||"")+'">'+esc(x.t.text||"（無題）")+'</div><div class="gtrack"><div class="gbar" style="left:'+left+'%;width:'+width+'%;background:'+col+';min-width:3%">'+fmtMD(x.s)+'–'+fmtMD(x.e)+'</div></div></div>';
+ });
+ h+='</div></div>';return h;
+}
+function stepWork(c){
+ var h=guide('タスクごとに<b>作業結果</b>をテキストで記入する。<b>作業結果を入力すると完了にできる。</b><b>全タスク完了までアウトプットへ進めません。</b>');
+ h+='<div class="banner banner-accent mb3">'+ic('alert',16)+'<span><b>リアルで手触りのあるインプット（材料）こそが、アウトプットの質と量を決める。</b>又聞きや検索だけで満足せず、<b>会いに行く・味わいに行く・話を聞きに行く</b>。<span class="muted">（高松智史『コンサルが「最初の3年間」で学ぶコト』）</span></span></div>';
+ var owners=[];c.tasks.forEach(function(t){if(t.owner&&owners.indexOf(t.owner)<0)owners.push(t.owner);});
+ if(_workOwner&&owners.indexOf(_workOwner)<0)_workOwner='';
+ if(owners.length){h+='<div class="row gap2 center wrapf mb3"><label class="lblsm" style="flex:0 0 auto">担当でフィルタ</label><select class="inp" data-act="workFilter" data-render="1" style="max-width:220px"><option value="">すべての担当</option>'+owners.map(function(o){return '<option value="'+esc(o)+'" '+(_workOwner===o?'selected':'')+'>'+esc(o)+'</option>';}).join('')+'</select>'+(_workOwner?'<span class="xsmall muted">「'+esc(_workOwner)+'」のタスクのみ表示中（進捗も連動）</span>':'')+'</div>';}
+ var shown=_workOwner?c.tasks.filter(function(t){return t.owner===_workOwner;}):c.tasks;
+ var done=shown.filter(function(t){return t.done;}).length;
+ h+='<p class="lbl">タスクの作業（'+done+'/'+shown.length+' 完了'+(_workOwner?'・「'+esc(_workOwner)+'」':'')+'）</p>';
+ if(c.tasks.length===0)h+='<p class="small muted">先に「T（TASK）」でタスクを入力してください。</p>';
+ h+='<div style="display:flex;flex-direction:column;gap:12px">';
+ shown.forEach(function(t){
+  var ready=!!((t.result||'').trim());
+  h+='<div style="border:1px solid var(--line);border-radius:8px;padding:12px">';
+  h+='<div class="small bold mb2" style="'+(t.done?'color:var(--mut2);text-decoration:line-through':'color:#334155')+'">'+esc(t.text||"（無題のタスク）")+'</div>';
+  h+='<p class="xsmall muted mb2">作業結果</p>';
+  h+='<textarea class="inp" rows="4" data-act="taskResult" data-id="'+t.id+'" placeholder="5W1Hを明確に作業結果を入力する" style="width:100%;line-height:1.6;resize:vertical">'+esc(t.result||"")+'</textarea>';
+  h+='<div class="mt3 row gap2" style="padding-top:12px;border-top:1px solid #f1f5f9;justify-content:flex-end">';
+  var doneLbl=t.done?'完了済み（取消）':(ready?'完了にする':'作業結果未入力');
+  h+='<button id="wdone-'+t.id+'" class="btn '+(t.done?'btn-line':(ready?'btn-brand':'btn-line'))+'" '+((!t.done&&!ready)?'disabled':'')+' data-click="workDone" data-id="'+t.id+'">'+ic(t.done?'circleChk':'circle',15)+'<span id="wdonetxt-'+t.id+'">'+doneLbl+'</span></button>';
+  h+='</div></div>';
+ });
+ h+='</div>';return h;
+}
+function stepOutput(c){
+ var o=c.output;
+ var h=guide('アウトプットは<b>通過点</b>。「考える」と「描く」を分ける。<b>「Copilot活用」</b>から、論点〜作業を結合した貼り付け用プロンプトを取得できます。<b>下のチェックをつけるまでディスカッションへ進めません。</b>');
+ h+='<button class="btn btn-outline mb3" data-click="copilotOut">'+ic('spark',15)+'<span>Copilot活用（プロンプトを表示）</span></button>';
+ h+='<div class="field"><label class="lbl">一言で言うと（最も伝えたいメッセージ）</label><textarea class="inp" rows="2" data-act="oMsg" placeholder="例：A・Bセグメントに集中し、Cは撤退すべき。">'+esc(o.message)+'</textarea><div class="hint">Copilotの結果を貼り付け／編集できます。</div></div>';
+ h+='<div class="field"><label class="lbl">構成・ストーリーライン</label><textarea class="inp" rows="6" data-act="oStruct" placeholder="1. 現状...&#10;2. 論点への答え...&#10;3. 根拠...&#10;4. ネクスト">'+esc(o.structure)+'</textarea><div class="hint">Copilotの結果を貼り付け／編集できます。</div></div>';
+ h+='<div style="display:flex;flex-direction:column;gap:8px">';
+ h+=toggleHtml("oc_separate",o.checks.separate,"「考える」と「描く」を分けた");
+ h+='</div>';
+ return h;
+}
+function stepDiscussion(c){
+ var d=c.discussion;
+ var h=guide('議論・炎上して<b>初めて</b>完了。上司・依頼者と議論するまでがワンセット。「ご査収ください」で投げない。議事録を貼り、<b>「Copilot活用」</b>で要点抽出プロンプトを取得できる。');
+ h+='<div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">';
+ h+=toggleHtml("dc_discussed",d.discussed,"上司・依頼者と実際に議論した（投げて終わりにしていない）");
+ h+='</div>';
+ h+='<div class="field"><label class="lbl">議事録（貼り付け）</label><textarea class="inp" rows="4" data-act="dMin" placeholder="会議の議事録・メモを貼り付け">'+esc(d.minutes||"")+'</textarea><div class="hint">Copilot活用で、ここから下の2項目を抽出するプロンプトを生成します。</div></div>';
+ h+='<button class="btn btn-outline mb3" data-click="copilotMin">'+ic('spark',15)+'<span>Copilot活用（議事録から要点を抽出）</span></button>';
+ h+='<div class="field"><label class="lbl">議論で出たフィードバック・炎上ポイント</label><textarea class="inp" rows="3" data-act="dFb" placeholder="Copilotの結果を貼り付け／編集できます。">'+esc(d.feedback)+'</textarea></div>';
+ h+='<div class="field"><label class="lbl">ネクストステップ</label><textarea class="inp" rows="3" data-act="dNext" placeholder="Copilotの結果を貼り付け／編集できます。">'+esc(d.next)+'</textarea></div>';
+ h+='<div class="banner banner-accent">'+ic('alert',16)+'<span>注意：ネクストステップを<b>単なるTASKとして捉えない</b>。必ずいったん<b>「論点」に立ち返る</b>。</span></div>';
+ return h;
+}
+
+/* report */
+function viewReport(c){
+ var total=(c.tasks||[]).reduce(function(a,t){return a+(parseFloat(t.estHours)||0);},0);
+ var st={};flattenSubs(c.subRonten).forEach(function(o){st[o.id]=o.tag;});
+ var h='<div class="no-print" style="position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid var(--line)"><div class="wrap row between" style="padding:12px 16px;max-width:720px"><button class="btn-ghost" data-click="reportBack">'+ic('aL')+'<span>編集に戻る</span></button><button class="btn btn-brand" data-click="print">'+ic('print',15)+'<span>印刷 / PDF保存</span></button></div></div>';
+ h+='<div class="wrap" style="max-width:820px;padding:24px 16px"><div class="rpt">';
+ h+='<div class="row between" style="align-items:flex-end;border-bottom:2px solid var(--brand);padding-bottom:8px"><div><div style="font-size:18px;font-weight:700">'+esc(c.title||"（無題の案件）")+'</div><div class="xsmall muted">依頼者：'+esc(c.requester||"—")+'　／　締切：'+esc(c.deadline||"—")+'</div></div><div class="xsmall muted" style="text-align:right">ロ→サ→T→ス→作→ア レポート<br>'+new Date().toLocaleDateString("ja-JP")+'</div></div>';
+ if(c.requestMemo)h+='<p class="xsmall muted" style="margin-top:6px">依頼内容メモ：'+esc(c.requestMemo)+'</p>';
+ h+='<h3>ロ：論点</h3><p class="small">'+esc(c.ronten.text||"—")+'</p>';
+ h+='<h3>サ：サブ論点</h3>';
+ if((c.subRonten||[]).length===0)h+='<p class="small muted">—</p>';else{h+='<div class="small">';(c.subRonten||[]).forEach(function(s,i){h+='<div><b>サ'+(i+1)+'.</b> '+esc(s.text||"—")+'</div>';(s.children||[]).forEach(function(ch){if(ch.text)h+='<div style="padding-left:16px;color:#475569">└ '+esc(ch.text)+'</div>';});});h+='</div>';}
+ h+='<h3>T：タスク（→対応サブ論点）</h3>';
+ if((c.tasks||[]).length===0)h+='<p class="small muted">—</p>';else{h+='<div class="small">';(c.tasks||[]).forEach(function(t){var lk=getLinks(t).map(function(id){return st[id];}).filter(Boolean).join(", ");h+='<div>・'+esc(t.text||"（無題）")+(lk?'（'+lk+'）':'')+(t.done?' ✓完了':'')+'</div>';});h+='</div>';}
+ h+='<h3>ス：スケジュール</h3>';
+ if((c.tasks||[]).length===0)h+='<p class="small muted">—</p>';else{h+='<table class="rt"><thead><tr><th>タスク</th><th>担当</th><th>開始</th><th>終了</th><th style="text-align:right">見積h</th></tr></thead><tbody>';(c.tasks||[]).forEach(function(t){h+='<tr><td>'+esc(t.text||"（無題）")+'</td><td>'+esc(t.owner||"—")+'</td><td>'+esc(t.start||"—")+'</td><td>'+esc(t.end||"—")+'</td><td style="text-align:right">'+esc(t.estHours||"—")+'</td></tr>';});h+='<tr><td colspan="4" style="text-align:right;font-weight:700">合計見積作業時間</td><td style="text-align:right;font-weight:700">'+total+'h</td></tr></tbody></table>';h+='<div class="small" style="font-weight:700;color:#475569;margin:8px 0 6px">スケジュール表（ガントチャート・営業日ベース）</div>'+gantt(c.tasks);}
+ h+='<h3>作：作業結果</h3>';
+ var mats=[];(c.tasks||[]).forEach(function(t){if((t.result||'').trim())mats.push('・['+(t.text||"タスク")+'] '+t.result.trim());});
+ if(mats.length===0)h+='<p class="small muted">—</p>';else{h+='<div class="small">'+mats.map(function(x){return '<div>'+esc(x)+'</div>';}).join('')+'</div>';}
+ h+='<h3>ア：アウトプット</h3><p class="small"><b>一言で言うと：</b>'+esc(c.output.message||"—")+'</p><div class="small"><b>構成・ストーリーライン：</b><div class="pre">'+esc(c.output.structure||"—")+'</div></div>';
+ h+='<h3>D：ディスカッション</h3><div class="small"><b>フィードバック：</b><div class="pre">'+esc(c.discussion.feedback||"—")+'</div></div><div class="small"><b>ネクストステップ：</b><div class="pre">'+esc(c.discussion.next||"—")+'</div></div>';
+ h+='</div></div>';
+ return h;
+}
+
+/* modals */
+function viewModal(){
+ var inner='',title='',w='720px';
+ if(state.modal==='slide'){title='フレーム図解：ロ→サ→T→ス→作→ア（＋D）';w='900px';inner=slideHtml();}
+ else if(state.modal==='manual'){title='使い方マニュアル';w='620px';inner=manualHtml();}
+ else if(state.modal==='sources'){title='出典・参考書籍';w='600px';inner=sourcesHtml();}
+ else if(state.modal==='copilotOut'){title='Copilot活用：貼り付け用プロンプト';w='640px';var cOut=sel();var ctxOut=buildContext(cOut);
+  var tp='あなたは優秀なコンサルタントです。以下の「論点・サブ論点・タスク・作業」をもとに、アウトプットのたたき台を作成してください。\n\n'+ctxOut+'\n\n上記をもとに、次の2点を日本語で出力してください。\n①一言で言うと（最も伝えたいメッセージ＝論点への答え）を1〜2文で。\n②構成・ストーリーライン（現状→論点への答え→根拠→ネクストの流れ）を箇条書きで。';
+  var imgPrompt=IMG_TPL+'\n'+ctxOut;
+  inner='<p class="small muted mb3">下のプロンプトをコピーして、Copilot / ChatGPT 等に貼り付けてください。論点〜作業結果が埋め込まれています。結果は「ア」ページの各欄に貼り戻せます。</p>'
+   +'<div class="promptbox"><div class="row between center mb2"><span class="small bold">① アウトプットのたたき台を作るプロンプト</span><button class="btn btn-line btn-sm" data-copy="cpOut">'+ic('copy',14)+'<span>コピー</span></button></div><textarea id="cpOut" rows="9" readonly>'+esc(tp)+'</textarea></div>'
+   +'<div class="promptbox"><div class="row between center mb2"><span class="small bold">② スライド貼付用ビジュアル画像を作るプロンプト</span><button class="btn btn-line btn-sm" data-copy="cpImg">'+ic('copy',14)+'<span>コピー</span></button></div><textarea id="cpImg" rows="9" readonly>'+esc(imgPrompt)+'</textarea></div>';
+ }
+ else if(state.modal==='copilotMin'){title='Copilot活用：議事録から要点を抽出';w='640px';var cMin=sel();
+  var mp='以下の会議の議事録から、次の2点を日本語で簡潔に抽出してください。\n\n①議論で出たフィードバック・炎上ポイント（箇条書き）\n②ネクストステップ（箇条書き。ただし単なるTASKにせず、必ず次の「論点」に立ち返る形で）\n\n--- 議事録 ---\n'+((cMin&&cMin.discussion.minutes)||'(議事録が未入力です。先に議事録を貼り付けてください。)');
+  inner='<p class="small muted mb3">議事録を貼り付けたうえで、下のプロンプトをコピーして Copilot / ChatGPT 等へ。結果は「フィードバック」「ネクストステップ」欄に貼り戻せます。</p>'
+   +'<div class="promptbox"><div class="row between center mb2"><span class="small bold">議事録から要点を抽出するプロンプト</span><button class="btn btn-line btn-sm" data-copy="cpMin">'+ic('copy',14)+'<span>コピー</span></button></div><textarea id="cpMin" rows="10" readonly>'+esc(mp)+'</textarea></div>';
+ }
+ return '<div class="modal-bg"><div class="modal" style="max-width:'+w+'"><div class="modal-h"><div class="bold">'+esc(title)+'</div><button class="icon-x" data-click="closeModal">'+ic('x',20)+'</button></div><div class="modal-b">'+inner+'</div></div></div>';
+}
+
+function fcardHtml(num,short,label,col,soft,desc){
+ return '<div class="fcard" style="border-color:'+col+';background:'+soft+'">'
+  +'<div class="xsmall bold" style="color:'+col+'">'+num+'</div>'
+  +'<div style="font-size:24px;font-weight:800;color:'+col+';line-height:1.05">'+short+'</div>'
+  +'<div class="small bold" style="margin-top:2px;color:var(--ink)">'+esc(label)+'</div>'
+  +'<div class="xsmall" style="margin-top:5px;line-height:1.6;color:#475569">'+esc(desc)+'</div></div>';
+}
+function slideHtml(){
+ var arrow='<span class="muted" style="font-weight:400"> → </span>';
+ var h='<div class="xsmall muted">高松智史『コンサルが「最初の3年間」で学ぶコト』第7項　論点バカ VS TASKバカ</div>';
+ h+='<div style="font-size:26px;font-weight:800;letter-spacing:1px;margin:4px 0 6px">'
+   +'<span style="color:'+BRAND+'">ロ</span>'+arrow+'<span style="color:'+BRAND+'">サ</span>'+arrow
+   +'<span style="color:'+ACCENT+'">T</span>'+arrow+'<span style="color:'+ACCENT+'">ス</span>'+arrow
+   +'<span style="color:'+ACCENT+'">作</span>'+arrow+'<span style="color:'+ACCENT+'">ア</span>'
+   +'<span class="muted" style="font-size:15px;font-weight:600"> （＋D）</span></div>';
+ h+='<p class="small mb3" style="color:#334155">正解のない問いから<b style="color:'+ACCENT+'">アウトプット（成果物）</b>を生み出すために、必ず通る6つの工程。<b>順番を守れるかが仕事の質を分ける。</b></p>';
+ // 論点思考ゾーン（ロ・サ＝ブランド色）
+ h+='<div class="zone" style="display:flex;width:100%;background:var(--brand-soft);color:var(--brand-dark);border:1px solid var(--brand-border);margin-bottom:10px">'+ic('spark',14)+' 論点思考ゾーン｜勝負どころ ≒ 全工数の50%</div>';
+ h+='<div class="grid2" style="margin-bottom:18px">';
+ h+=fcardHtml('01','ロ','論点',BRAND,'var(--brand-soft)','そもそも解くべき本質的な「問い」は何か。ここを外すと全部ムダになる。');
+ h+=fcardHtml('02','サ','サブ論点',BRAND,'var(--brand-soft)','論点を構造的に分解した小さな問い。プロは50個単位で出す。');
+ h+='</div>';
+ // 実行ゾーン（T・ス・作・ア＝アクセント色）
+ h+='<div class="zone" style="display:flex;width:100%;background:var(--accent-soft);color:var(--accent-text);border:1px solid var(--accent-border);margin-bottom:10px">実行ゾーン ＜段取りと泥臭い手仕事＞</div>';
+ h+='<div class="grid4" style="margin-bottom:18px">';
+ h+=fcardHtml('03','T','TASK',ACCENT,'var(--accent-soft)','各サブ論点を解くには何をすべきか、作業を設計する。');
+ h+=fcardHtml('04','ス','スケジュール',ACCENT,'var(--accent-soft)','タスクを時間軸に並べ、誰がいつまでにを決める。');
+ h+=fcardHtml('05','作','作業',ACCENT,'var(--accent-soft)','検索・分析・インタビューなど、手を動かす実作業。');
+ h+=fcardHtml('06','ア','アウトプット',ACCENT,'var(--accent-soft)','パワポ等にまとめた成果物。ここでようやく形になる。');
+ h+='</div>';
+ // 最重要：論点バカ VS TASKバカ
+ h+='<div class="fcard" style="border-color:var(--brand-border);margin-bottom:12px">';
+ h+='<div class="mb2"><span class="zone" style="background:var(--brand);color:#fff;font-size:12px;padding:3px 9px">最重要</span> <b>論点から始めよ —— いきなり「T」に飛ぶな</b></div>';
+ h+='<div class="flex gap2 center wrapf">';
+ h+='<div class="grow" style="min-width:200px;background:var(--brand-soft);border:1px solid var(--brand-border);border-radius:8px;padding:9px"><div class="small bold" style="color:var(--brand-dark)">論点バカ ◎</div><div class="xsmall" style="color:#334155;margin-top:2px">「ロ→サ」の分解に総工数の約半分を割く。問いを徹底的に詰めてから動く＝論点思考。<b>褒め言葉</b>。</div></div>';
+ h+='<div class="bold muted" style="flex:0 0 auto">VS</div>';
+ h+='<div class="grow" style="min-width:200px;background:var(--accent-soft);border:1px solid var(--accent-border);border-radius:8px;padding:9px"><div class="small bold" style="color:var(--accent-text)">TASKバカ ✕</div><div class="xsmall" style="color:#334155;margin-top:2px">問いを飛ばし作業へ直行。一見忙しいが的を外せば成果はゼロ。五里霧中になる。</div></div>';
+ h+='</div></div>';
+ // 後半：泥臭い手仕事
+ h+='<div class="fcard" style="border-color:var(--accent-border);background:var(--accent-soft);margin-bottom:12px"><div class="small"><b style="color:var(--accent-text)">後半</b> <b>T→ス→作→ア は泥臭い手仕事</b><div class="xsmall" style="margin-top:5px;color:#334155;line-height:1.6">論点が定まれば、あとは段取りと実作業の積み重ね。リアルで手触りのある<b style="color:var(--accent-text)">インプット（材料）</b>こそがアウトプットの質と量を決める。<b>会いに行く・味わいに行く・話を聞きに行く。</b>検索だけで満足したら、それは自己満足。</div></div></div>';
+ // ＋D 発展形
+ h+='<div class="fcard" style="border-color:#D8CFEA;background:var(--tertiary-soft);margin-bottom:10px"><div class="small"><b style="color:var(--tertiary-text);font-size:16px">＋D</b> <b style="color:var(--tertiary-text)">発展形：ロ→サ→T→ス→作→ア→D（議論／Discussion）</b><div class="xsmall" style="margin-top:5px;color:#334155;line-height:1.6">アウトプットを出して終わりではない。上司と議論し、<b>炎上してはじめて工程は完了</b>する。メールに「ご査収ください」と書いて投げて帰るのはNG——議論までがワンセット。ネクストステップは単なるTASKにせず、必ず<b>「論点」に立ち返る</b>。</div></div></div>';
+ h+='<div class="xsmall muted">出典：高松智史『コンサルが「最初の3年間」で学ぶコト』第7項より。</div>';
+ return h;
+}
+
+
+function manualHtml(){
+ var h='<div class="guide">'+ic('bulb',16)+'<div>このツールは<b>完全オフライン</b>で動作し、案件データを<b>ブラウザ内（localStorage）だけ</b>に保存します（<b>外部送信は一切ありません</b>）。<b>端末・ブラウザを変えるとデータは引き継がれません</b>ので、右上<b>「書き出し」</b>でJSON保存・<b>「読み込み」</b>で復元をこまめに。</div></div>';
+ h+='<p class="small mb2"><b>基本の流れ</b>：「新規案件」→ ロ→サ→T→ス→作→ア→D を上のステッパーで進める → 「レポート」で印刷/PDF。各ステップには下記の<b>「次へ進める条件（ゲート）」</b>があり、満たすと「確認して次へ」が押せます。</p>';
+ h+='<div style="border:1px solid var(--brand-border);background:var(--brand-soft);border-radius:8px;padding:10px 12px;margin-bottom:12px" class="row between center wrapf gap2"><span class="small" style="color:var(--brand-dark)">'+ic('bulb',15)+' まずは全体像から。各工程の意味と<b>「論点から始める」</b>考え方は<b>フレーム図解</b>で。</span><button class="btn btn-outline btn-sm" data-click="slide">'+ic('img',14)+'<span>フレーム図解を見る</span></button></div>';
+ h+='<div style="border:1px solid var(--line);border-radius:8px;padding:12px;margin-bottom:12px"><b class="small">0. 案件をつくる</b><div class="small" style="margin-top:4px;color:#475569">「新規案件」を押し、案件名（依頼の一言）・依頼者・締切・依頼内容メモを入力。<b>案件情報は「ロ」ページでのみ編集可能</b>（他ステップでは保護のためロック表示）。</div></div>';
+ h+='<ol style="padding-left:20px;line-height:1.7;margin:0">';
+ h+='<li class="small mb2"><b>ロ（論点）</b>：最終的に答えるべき問いを<b>一文の“問い”</b>で記入。<br><span style="color:#475569">→進む条件：セルフチェック3つ（①問いの形になっている ②依頼者のゴールと一致 ③一文で言える）を<b>すべてON</b>。</span></li>';
+ h+='<li class="small mb2"><b>サ（サブ論点）</b>：論点をMECEに分解。「サブサブ論点を追加」でさらに階層化できます。<b>「テキストで一括編集」</b>（書き出し→編集→読み込み）でまとめて入力も可：先頭<b>「# 」で論点</b>、1行＝1サブ論点、行頭に<b>スペース2つ＋「- 」でサブサブ論点</b>。<br><span style="color:#475569">→進む条件：サブ論点を<b>1つ以上</b>入力し、<b>「依頼者と合意した」にチェック</b>。</span></li>';
+ h+='</ol><div class="manualdiv"></div><ol start="3" style="padding-left:20px;line-height:1.7;margin:0">';
+ h+='<li class="small mb2"><b>T（TASK）</b>：上の<b>サブ論点一覧でチェック</b>→<b>タスク名を入力して「タスクを追加」</b>（1タスクで複数サブ論点もOK）。作成したタスクは下の<b>タスク一覧</b>に並び、各サブ論点には紐づく<b>T番号タグ</b>（未割当は赤）が表示されます。一覧の<b>「編集」</b>で紐付けを付け直せます。※サブサブ論点を持つサブ論点は紐付け対象外（その<b>サブサブ論点側に紐付け</b>）。<br><span style="color:#475569">→進む条件：タスクが1つ以上あり、<b>すべてのサブ論点にタスクが割り当て済み</b>。</span></li>';
+ h+='<li class="small mb2"><b>ス（スケジュール）</b>：各タスクに担当・開始/終了日・見積時間(h)を入力。<b>「先行タスク」</b>は<b>「先行タスクを追加」→検索（部分一致）して選択→「追加」</b>で複数指定でき、このタスクの開始日が各先行タスクの終了日の翌日以降に自動制御されます。「締切から自動設定」で全日程を一括計算も可。担当フィルタ・ガント・合計見積時間も表示。<br><span style="color:#475569">→注意：終了日が開始日より前、または締切より後だと警告（その状態では次へ進めません）。</span></li>';
+ h+='<li class="small mb2"><b>作（作業）</b>：タスクごとに<b>作業結果</b>をテキストで記入。<b>作業結果を入力</b>すると「完了にする」が押せます。<br><span style="color:#475569">→進む条件：<b>すべてのタスクを完了</b>に。</span></li>';
+ h+='<li class="small mb2"><b>ア（アウトプット）</b>：あくまで通過点。<b>「Copilot活用」</b>で、論点〜作業（結果）を結合した<b>たたき台プロンプト</b>と<b>スライド用画像生成プロンプト</b>を取得→結果を「一言」「構成・ストーリーライン」に貼り戻し。<br><span style="color:#475569">→進む条件：チェック（「考える/描くを分けた」）をON。</span></li>';
+ h+='<li class="small mb2"><b>D（ディスカッション）</b>：上司・依頼者と<b>実際に議論</b>して初めて完了。議事録を貼り付け→<b>「Copilot活用」</b>でフィードバック／ネクストステップを抽出できます。<br><span style="color:#475569">→ネクストは単なるTASKにせず、必ず「論点」に立ち返る。最後に「案件を完了して一覧へ」。</span></li>';
+ h+='</ol>';
+ h+='<div style="border-top:1px solid var(--line);margin-top:12px;padding-top:10px"><b class="small">便利機能</b><ul class="small" style="margin:6px 0 0;padding-left:18px;line-height:1.7;color:#475569">';
+ h+='<li>上部の番号（ロ・サ・T・ス・作・ア・D）をクリックすると任意のステップへ移動。</li>';
+ h+='<li><b>レポート</b>：全ステップの内容を1枚にまとめてA4で<b>印刷／PDF保存</b>。</li>';
+ h+='<li><b>書き出し／読み込み</b>（右上）：全案件をJSONでバックアップ・復元。</li>';
+ h+='<li>各カードの<b>ゴミ箱アイコン</b>で案件・サブ論点・タスクを削除。</li>';
+ h+='<li><b>操作マニュアル</b>（右上）：このページをいつでも表示できます。</li>';
+ h+='<li><b>出典・参考書籍</b>：一覧画面の「出典」ボタン、または下のボタンから参考書籍を確認できます。</li>';
+ h+='</ul></div>';
+ h+='<div style="border-top:1px solid var(--line);margin-top:12px;padding-top:10px" class="row between center wrapf gap2"><span class="small" style="color:#475569">本アプリの考え方の<b>出典・参考書籍</b>はこちら。</span><button class="btn btn-outline btn-sm" data-click="sources">'+ic('book',14)+'<span>出典・参考書籍を見る</span></button></div>';
+ return h;
+}
+function sourcesHtml(){
+ var h='<div class="guide">'+ic('bulb',16)+'<div>このアプリの工程・考え方は、以下の書籍を参考にしています。詳しくは原著をご参照ください。</div></div>';
+ h+='<div style="border:1px solid var(--brand-border);background:var(--brand-soft);border-radius:8px;padding:12px 14px;margin-bottom:12px">';
+ h+='<div class="small bold" style="color:var(--brand-dark)">高松智史『コンサルが「最初の3年間」で学ぶコト 知らないと一生後悔する99のスキルと5の挑戦』</div>';
+ h+='<div class="xsmall" style="color:#475569;margin-top:6px;line-height:1.7">本アプリの枠組み —— <b>ロ→サ→T→ス→作→ア（＋D）</b> の流れ、<b>「論点から始める」（論点バカ◎ / TASKバカ✕）</b>、'
+   +'<b>リアルで手触りのあるインプット（材料）を自ら取りに行く</b>姿勢、<b>アウトプット後の議論（＋D）</b> までを完了とする考え方は、いずれも本書を参考にしています。</div>';
+ h+='</div>';
+ h+='<p class="xsmall muted">※ 本アプリは学習・実務支援を目的とした非公式のツールであり、書籍の内容を要約・引用したものです。正確な記述は原著をご確認ください。</p>';
+ return h;
+}
+
+/* ===== event wiring ===== */
+function findSub(c,id){return (c.subRonten||[]).filter(function(s){return s.id===id;})[0];}
+function findTask(c,id){return (c.tasks||[]).filter(function(t){return t.id===id;})[0];}
+function applySchedule(c){
+ var norm=normalizeSchedule(c.tasks||[]);var byId={};norm.forEach(function(t){byId[t.id]=t;});
+ (c.tasks||[]).forEach(function(t){if(byId[t.id])t.start=byId[t.id].start;});
+}
+function fmtISO(d){var m=d.getMonth()+1,day=d.getDate();return d.getFullYear()+'-'+(m<10?'0'+m:m)+'-'+(day<10?'0'+day:day);}
+function addDays(d,n){var x=new Date(d.getTime());x.setDate(x.getDate()+n);return x;}
+function isHoliday(d){return !!HOLIDAYS[fmtISO(d)];}
+function isBiz(d){var w=d.getDay();return w!==0&&w!==6&&!isHoliday(d);}
+function lastBizOnOrBefore(d){var x=new Date(d.getTime());while(!isBiz(x))x=addDays(x,-1);return x;}
+function prevBiz(d){var x=addDays(d,-1);while(!isBiz(x))x=addDays(x,-1);return x;}
+function subBizDays(d,n){var x=new Date(d.getTime());var k=0;while(k<n){x=addDays(x,-1);if(isBiz(x))k++;}return x;}
+function countBizDays(from,to){var x=new Date(from.getTime());var k=0;while(x<to){x=addDays(x,1);if(isBiz(x))k++;}return k;}
+function defaultBuffer(c){var D=parseDate(c.deadline);if(!D)return 0;var now=new Date();var today=new Date(now.getFullYear(),now.getMonth(),now.getDate());if(D<=today)return 0;return Math.ceil(countBizDays(today,D)*0.1);}
+function bufferBizOf(c){return (c.bufferBizDays!=null&&c.bufferBizDays!=='')?Math.max(0,parseInt(c.bufferBizDays,10)||0):defaultBuffer(c);}
+function autoSchedule(){
+ var c=sel();if(!c)return;
+ var tasks=c.tasks||[];
+ if(!tasks.length){window.alert('タスクがありません。');return;}
+ var D=parseDate(c.deadline);
+ if(!D){window.alert('先に「締切」を設定してください。');return;}
+ var now=new Date();var today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+ if(D<today){window.alert('締切が本日より過去のため自動設定できません。締切を見直してください。');return;}
+ var byId={};tasks.forEach(function(t){byId[t.id]=t;});
+ // 循環チェック・深さ（複数先行対応のDFS）
+ var depth={},vstate={},cyc=false;
+ function calcDepth(t){if(vstate[t.id]===1){cyc=true;return 0;}if(depth[t.id]!=null)return depth[t.id];vstate[t.id]=1;var mx=0;getPreds(t).forEach(function(pid){var pr=byId[pid];if(pr){var d=calcDepth(pr)+1;if(d>mx)mx=d;}});vstate[t.id]=2;depth[t.id]=mx;return mx;}
+ tasks.forEach(function(t){calcDepth(t);});
+ if(cyc){window.alert('先行タスクの指定が循環しています。先行タスクを見直してください。');return;}
+ // 後続マップ
+ var succs={};tasks.forEach(function(t){succs[t.id]=[];});
+ tasks.forEach(function(t){getPreds(t).forEach(function(pid){if(succs[pid])succs[pid].push(t.id);});});
+ // 所要営業日数：見積hあり→ceil(h/8)、なし→1営業日
+ function durBiz(t){var h=parseFloat(t.estHours);return (!isNaN(h)&&h>0)?Math.max(1,Math.ceil(h/8)):1;}
+ // 締切から逆算：後続（深さの大きいもの）から処理
+ var order=tasks.map(function(t,i){return {t:t,i:i};});
+ order.sort(function(a,b){return (depth[b.t.id]-depth[a.t.id])||(b.i-a.i);});
+ // 締切バッファ：締切のバッファ営業日数だけ手前を最終タスクの終了基準にする
+ var buffer=bufferBizOf(c);
+ var anchor=lastBizOnOrBefore(D);
+ if(buffer>0)anchor=subBizDays(anchor,buffer);
+ var result={};
+ order.forEach(function(o){
+  var t=o.t,ss=succs[t.id],end;
+  if(!ss.length){end=anchor;}
+  else{var m=null;ss.forEach(function(sid){if(result[sid]){var pb=prevBiz(result[sid]._s);if(!m||pb<m)m=pb;}});end=m||anchor;}
+  if(!isBiz(end))end=lastBizOnOrBefore(end);
+  var start=subBizDays(end,durBiz(t)-1);
+  result[t.id]={start:fmtISO(start),end:fmtISO(end),_s:start};
+ });
+ // 開始が本日より過去になるタスクはエラー（本日開始は許容）
+ var bad=[];tasks.forEach(function(t){if(result[t.id]._s<today)bad.push(t.text||'（無題）');});
+ if(bad.length){window.alert('締切から逆算すると、開始日が本日より過去になるタスクがあります：\n・'+bad.join('\n・')+'\n\n締切を延ばす／バッファ営業日数を減らす／見積時間・先行タスクを見直してください。');return;}
+ tasks.forEach(function(t){t.start=result[t.id].start;t.end=result[t.id].end;});
+ save();render();
+}
+function refreshWork(c,tid){
+ var t=findTask(c,tid);if(!t)return;
+ var ready=!!((t.result||'').trim());
+ var btn=document.getElementById('wdone-'+tid);
+ var txt=document.getElementById('wdonetxt-'+tid);
+ if(txt)txt.textContent=t.done?'完了済み（取消）':(ready?'完了にする':'作業結果未入力');
+ if(btn){btn.disabled=(!t.done&&!ready);btn.className='btn '+(t.done?'btn-line':(ready?'btn-brand':'btn-line'));}
+}
+function canAdvance(c){
+ var k=STEPS[c.currentStep].key;
+ if(k==='ronten'){var ch=c.ronten.checks;if(!(ch.isQuestion&&ch.matchesGoal&&ch.oneSentence))return 'セルフチェック3つをすべて満たしてください。';}
+ if(k==='sub'){var subs=(c.subRonten||[]).filter(function(s){return (s.text||'').trim();});if(subs.length===0)return 'サブ論点を1つ以上入力してください。';if(!c.subAgreed)return '「依頼者とサブ論点の内容について合意を得た」にチェックを入れてください。';}
+ if(k==='task'){var opts=flattenSubs(c.subRonten).filter(function(o){return o.text.trim();});if(opts.length===0)return '先にサブ論点を入力してください。';if((c.tasks||[]).length===0)return 'タスクを1つ以上追加してください。';var unassigned=opts.filter(function(o){return o.linkable!==false&&!c.tasks.some(function(t){return getLinks(t).indexOf(o.id)>=0;});});if(unassigned.length>0)return 'すべてのサブ論点にタスクを割り当ててください。';}
+ if(k==='schedule'){var bad=(c.tasks||[]).some(function(t){return t.start&&t.end&&parseDate(t.end)&&parseDate(t.start)&&parseDate(t.end)<parseDate(t.start);});var over=(c.tasks||[]).some(function(t){return t.end&&c.deadline&&parseDate(t.end)&&parseDate(c.deadline)&&parseDate(t.end)>parseDate(c.deadline);});if(bad)return '終了日が開始日より前のタスクがあります。';if(over)return '締切より後の終了日のタスクがあります。';}
+ if(k==='work'){if((c.tasks||[]).length===0)return '先にタスクを入力してください。';if(!c.tasks.every(function(t){return t.done;}))return 'すべてのタスクを完了にしてください。';}
+ if(k==='output'){if(!c.output.checks.separate)return '下のチェックをつけてください。';}
+ return null;
+}
+function onAct(act,el){
+ var v=el.value;
+ var id=el.getAttribute('data-id'),pid=el.getAttribute('data-pid'),cid=el.getAttribute('data-cid'),tid=el.getAttribute('data-tid'),mid=el.getAttribute('data-mid');
+ // 一覧（タスク管理）/設定など、選択中の案件に依存しない入力を先に処理
+ switch(act){
+  case 'cStatus':{var cs=caseById(id);if(cs){cs.taskStatus=v;if(v==='done')cs.planDate='';}save();if(el.getAttribute('data-render')==='1')render();return;}
+  case 'subText':_subText=v;return;
+ }
+ var c=sel();if(!c)return;
+ switch(act){
+  case 'cTitle':c.title=v;break;
+  case 'cReq':c.requester=v;break;
+  case 'cDead':c.deadline=v;break;
+  case 'cMemo':c.requestMemo=v;break;
+  case 'rText':c.ronten.text=v;break;
+  case 'sText':{var s=findSub(c,id);if(s)s.text=v;break;}
+  case 'scText':{var s2=findSub(c,pid);if(s2){var ch=(s2.children||[]).filter(function(x){return x.id===cid;})[0];if(ch)ch.text=v;}break;}
+  case 'taskName':_taskName=v;return;
+  case 'predSearch':{_predQuery=v;_predPick=null;var prows=document.querySelectorAll('[data-predrow="'+id+'"]');var pq=(v||'').toLowerCase();prows.forEach(function(r){r.style.display=(!pq||(r.getAttribute('data-name')||'').indexOf(pq)>=0)?'':'none';});return;}
+  case 'sOwner':{var t2=findTask(c,id);if(t2)t2.owner=v;break;}
+  case 'sStart':{var t3=findTask(c,id);if(t3)t3.start=v;applySchedule(c);break;}
+  case 'sEnd':{var t4=findTask(c,id);if(t4)t4.end=v;applySchedule(c);break;}
+  case 'sHours':{var t5=findTask(c,id);if(t5)t5.estHours=v;break;}
+  case 'sBuffer':c.bufferBizDays=(v===''?null:Math.max(0,parseInt(v,10)||0));break;
+  case 'taskResult':{var tre=findTask(c,id);if(tre)tre.result=v;refreshWork(c,id);break;}
+  case 'schedFilter':_schedOwner=v;break;
+  case 'workFilter':_workOwner=v;break;
+  case 'oMsg':c.output.message=v;break;
+  case 'oStruct':c.output.structure=v;break;
+  case 'dMin':c.discussion.minutes=v;break;
+  case 'dFb':c.discussion.feedback=v;break;
+  case 'dNext':c.discussion.next=v;break;
+ }
+ save();
+ if(el.getAttribute('data-render')==='1')render();
+}
+var _schedOwner='',_workOwner='';
+function doCopy(btn){
+ var ta=document.getElementById(btn.getAttribute('data-copy'));if(!ta)return;
+ ta.focus();ta.select();try{document.execCommand('copy');}catch(e){}
+ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(ta.value);}
+ var sp=btn.querySelector('span');if(sp){var old=sp.textContent;sp.textContent='コピーしました';setTimeout(function(){sp.textContent=old;},1200);}
+}
+function handleClick(act,el){
+ var id=el.getAttribute('data-id'),sid=el.getAttribute('data-sid'),pid=el.getAttribute('data-pid'),cid=el.getAttribute('data-cid'),tid=el.getAttribute('data-tid'),mid=el.getAttribute('data-mid'),i=el.getAttribute('data-i');
+ var c=sel();
+ switch(act){
+  /* app/navigation */
+  case 'home':case 'back':resetTransient();state.selectedId=null;state.reporting=false;state.modal=null;render();return;
+  case 'closeModal':state.modal=null;render();return;
+  case 'slide':state.modal='slide';render();return;
+  case 'manual':state.modal='manual';render();return;
+  case 'sources':state.modal='sources';render();return;
+  case 'import':document.getElementById('filein').click();return;
+  case 'export':{var blob=new Blob([JSON.stringify(state.cases,null,2)],{type:'application/json'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download='rosatsusakua_backup.json';document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);return;}
+  case 'sample':state.cases.push(sampleCase());save();render();return;
+  case 'new':{resetTransient();var nc=newCase();state.cases.push(nc);state.selectedId=nc.id;state.reporting=false;save();render();return;}
+  case 'open':resetTransient();state.selectedId=id;state.reporting=false;render();return;
+  /* task management */
+  case 'impToggle':{var ci=caseById(id);if(ci){ci.importance=isImportant(ci)?'low':'high';save();render();}return;}
+  case 'todayToggle':{var ct=caseById(id);if(ct){var ti=fmtISO(todayDate());ct.planDate=(ct.planDate===ti)?'':ti;save();render();}return;}
+  case 'showDone':_showDone=!_showDone;render();return;
+  case 'researchToggle':{var cr=caseById(id);if(cr){cr.isResearchTask=!cr.isResearchTask;save();render();}return;}
+  case 'researchFilterToggle':_researchFilter=!_researchFilter;render();return;
+  case 'del':{if(!window.confirm('この案件を削除しますか？（元に戻せません）'))return;state.cases=state.cases.filter(function(x){return x.id!==id;});if(state.selectedId===id){state.selectedId=null;state.reporting=false;}save();render();return;}
+  case 'report':state.reporting=true;render();return;
+  case 'reportBack':state.reporting=false;render();return;
+  case 'print':window.print();return;
+  case 'complete':resetTransient();if(c){c.stepDone.discussion=true;c.taskStatus='done';c.planDate='';}state.selectedId=null;state.reporting=false;save();render();return;
+ }
+ if(!c)return;
+ switch(act){
+  case 'go':resetTransient();c.currentStep=parseInt(i,10)||0;save();render();return;
+  case 'prev':resetTransient();if(c.currentStep>0)c.currentStep--;save();render();return;
+  case 'next':{var msg=canAdvance(c);if(msg){window.alert(msg);return;}resetTransient();c.stepDone[STEPS[c.currentStep].key]=true;if(c.currentStep<STEPS.length-1)c.currentStep++;save();render();return;}
+  /* ronten checks */
+  case 'rc_isQuestion':c.ronten.checks.isQuestion=!c.ronten.checks.isQuestion;break;
+  case 'rc_matchesGoal':c.ronten.checks.matchesGoal=!c.ronten.checks.matchesGoal;break;
+  case 'rc_oneSentence':c.ronten.checks.oneSentence=!c.ronten.checks.oneSentence;break;
+  /* sub */
+  case 'addSub':c.subRonten.push({id:uid(),text:'',children:[]});break;
+  case 'exportSub':_subText=buildSubText(c);break;
+  case 'subEditorToggle':_subEditorOpen=!_subEditorOpen;break;
+  case 'importSub':{var parsed=parseSubText(_subText);if(!parsed.subs.length){window.alert('読み込めるサブ論点がありません。1行に1つ、サブ論点を書いてください。');return;}if(!window.confirm('テキストの内容で、現在の論点・サブ論点（'+(c.subRonten||[]).length+'件）を置き換えます。よろしいですか？'))return;if(c.ronten&&parsed.ronten)c.ronten.text=parsed.ronten;c.subRonten=parsed.subs;break;}
+  case 'delSub':c.subRonten=c.subRonten.filter(function(s){return s.id!==id;});break;
+  case 'addChild':{var s=findSub(c,id);if(s){s.children=s.children||[];s.children.push({id:uid(),text:''});}break;}
+  case 'delChild':{var s3=findSub(c,pid);if(s3)s3.children=(s3.children||[]).filter(function(x){return x.id!==cid;});break;}
+  case 'subAgree':c.subAgreed=!c.subAgreed;break;
+  /* task */
+  case 'delTask':{c.tasks=c.tasks.filter(function(t){return t.id!==id;});c.tasks.forEach(function(t){if(t.predecessorIds)t.predecessorIds=t.predecessorIds.filter(function(pid){return pid!==id;});});if(_taskEditId===id){_taskEditId=null;_taskName='';_taskSel={};}if(_predPick===id)_predPick=null;break;}
+  case 'predToggle':{var tp=findTask(c,id);if(tp){var pl=getPreds(tp).slice();var ix=pl.indexOf(sid);if(ix>=0)pl.splice(ix,1);else pl.push(sid);tp.predecessorIds=pl;if(tp.predecessorId!==undefined)delete tp.predecessorId;applySchedule(c);}break;}
+  case 'taskUp':{var iu=-1;c.tasks.forEach(function(t,k){if(t.id===id)iu=k;});if(iu>0){var tu=c.tasks[iu-1];c.tasks[iu-1]=c.tasks[iu];c.tasks[iu]=tu;}break;}
+  case 'taskDown':{var idn=-1;c.tasks.forEach(function(t,k){if(t.id===id)idn=k;});if(idn>=0&&idn<c.tasks.length-1){var td=c.tasks[idn+1];c.tasks[idn+1]=c.tasks[idn];c.tasks[idn]=td;}break;}
+  case 'taskSel':{if(_taskSel[sid])delete _taskSel[sid];else _taskSel[sid]=true;break;}
+  case 'addTaskSel':{var nm=(_taskName||'').trim();var selIds=Object.keys(_taskSel).filter(function(k){return _taskSel[k];});if(!nm){window.alert('タスク名を入力してください。');return;}if(!selIds.length){window.alert('解決するサブ論点を1つ以上チェックしてください。');return;}if(_taskEditId){var teu=findTask(c,_taskEditId);if(teu){teu.text=nm;teu.linkIds=selIds;if(teu.linkId)delete teu.linkId;}}else{c.tasks.push({id:uid(),text:nm,linkIds:selIds,owner:'',start:'',end:'',estHours:'',predecessorIds:[],done:false,result:''});}_taskName='';_taskSel={};_taskEditId=null;break;}
+  case 'taskEdit':{var ted=findTask(c,id);if(ted){_taskEditId=id;_taskName=ted.text||'';_taskSel={};getLinks(ted).forEach(function(s5){_taskSel[s5]=true;});}break;}
+  case 'taskCancelEdit':_taskEditId=null;_taskName='';_taskSel={};break;
+  case 'predOpen':_predOpen=(_predOpen===id?null:id);_predQuery='';_predPick=null;break;
+  case 'predPick':_predPick=sid;break;
+  case 'predAdd':{var tpa=findTask(c,id);if(tpa){if(!_predPick){window.alert('追加する先行タスクをプルダウンから選んでください。');return;}if(!c.tasks.some(function(x){return x.id===_predPick;})){window.alert('選択した先行タスクが見つかりません（削除された可能性）。選び直してください。');_predPick=null;return;}var prevP=tpa.predecessorIds;var pls=getPreds(tpa).slice();if(pls.indexOf(_predPick)<0)pls.push(_predPick);tpa.predecessorIds=pls;if(hasCycle(c.tasks)){tpa.predecessorIds=prevP;window.alert('先行タスクの指定が循環します。別のタスクを選んでください。');return;}if(tpa.predecessorId!==undefined)delete tpa.predecessorId;_predPick=null;_predQuery='';applySchedule(c);}break;}
+  /* work */
+  case 'workDone':{var tc=findTask(c,id);if(tc){if(tc.done)tc.done=false;else if((tc.result||'').trim())tc.done=true;}break;}
+  /* output */
+  case 'oc_separate':c.output.checks.separate=!c.output.checks.separate;break;
+  /* discussion */
+  case 'dc_discussed':c.discussion.discussed=!c.discussion.discussed;break;
+  /* modals needing a selected case */
+  case 'copilotOut':state.modal='copilotOut';render();return;
+  case 'copilotMin':state.modal='copilotMin';render();return;
+  case 'autoSchedule':autoSchedule();return;
+  default:return;
+ }
+ save();render();
+}
+function onClick(e){
+ var bg=e.target.closest('.modal-bg');
+ if(bg&&e.target===bg){state.modal=null;render();return;}
+ var cp=e.target.closest('[data-copy]');
+ if(cp){doCopy(cp);return;}
+ var el=e.target.closest('[data-click]');
+ if(!el)return;
+ handleClick(el.getAttribute('data-click'),el);
+}
+var _delegated=false;
+function bindInputs(){
+ var root=document.getElementById('root');
+ if(!_delegated){root.addEventListener('click',onClick);_delegated=true;}
+ root.querySelectorAll('[data-act]').forEach(function(el){
+  var ev=(el.tagName==='SELECT'||el.type==='date'||el.type==='number')?'change':'input';
+  el.addEventListener(ev,function(){onAct(el.getAttribute('data-act'),el);});
+ });
+}
+
+/* ===== init ===== */
+(function init(){
+ var fi=document.getElementById('filein');
+ if(fi){fi.addEventListener('change',function(e){
+  var f=e.target.files&&e.target.files[0];if(!f)return;
+  var rd=new FileReader();
+  rd.onload=function(){try{var a=JSON.parse(rd.result);if(Array.isArray(a)){state.cases=a;migrateCases();state.selectedId=null;state.reporting=false;state.modal=null;save();render();}else{window.alert('JSONの形式が正しくありません（配列ではありません）。');}}catch(err){window.alert('読み込みに失敗しました：'+err.message);}};
+  rd.readAsText(f);e.target.value='';
+ });}
+ load();
+ render();
+})();
+</script>
