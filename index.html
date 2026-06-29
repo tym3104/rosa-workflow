@@ -718,7 +718,7 @@ function stepWork(c){
   h+='<div style="border:1px solid var(--line);border-radius:8px;padding:12px">';
   h+='<div class="small bold mb2" style="'+(t.done?'color:var(--mut2);text-decoration:line-through':'color:#334155')+'">'+esc(t.text||"（無題のタスク）")+'</div>';
   h+='<p class="xsmall muted mb2">作業結果</p>';
-  h+='<textarea class="inp" rows="4" data-act="taskResult" data-id="'+t.id+'" placeholder="5W1Hを明確に作業結果を入力する" style="width:100%;line-height:1.6;resize:vertical">'+esc(t.result||"")+'</textarea>';
+  h+='<textarea class="inp" rows="4" data-act="taskResult" data-id="'+t.id+'" placeholder="5W1H（なぜ・なにを・だれが・いつ・どこで・どのように）を明確に作業結果を入力する" style="width:100%;line-height:1.6;resize:vertical">'+esc(t.result||"")+'</textarea>';
   h+='<div class="mt3 row gap2" style="padding-top:12px;border-top:1px solid #f1f5f9;justify-content:flex-end">';
   var doneLbl=t.done?'完了済み（取消）':(ready?'完了にする':'作業結果未入力');
   h+='<button id="wdone-'+t.id+'" class="btn '+(t.done?'btn-line':(ready?'btn-brand':'btn-line'))+'" '+((!t.done&&!ready)?'disabled':'')+' data-click="workDone" data-id="'+t.id+'">'+ic(t.done?'circleChk':'circle',15)+'<span id="wdonetxt-'+t.id+'">'+doneLbl+'</span></button>';
