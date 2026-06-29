@@ -382,7 +382,7 @@ function render(){
  html+='<div class="hdr"><div class="hdr-in">';
  html+='<button class="logo" data-click="home"><span class="mk">ロサ</span><span style="text-align:left"><span class="t1">ロ→サ→T→ス→作→ア</span><br><span class="t2">論点思考ワークフロー（ローカル版・完全オフライン）</span></span></button>';
  html+='<div class="row gap2 wrapf">';
- html+='<button class="btn btn-line btn-sm" data-click="manual">'+ic('book')+'<span>操作マニュアル</span></button>';
+ html+='<button class="btn btn-brand btn-sm" data-click="manual">'+ic('book')+'<span>操作マニュアル</span></button>';
  html+='<button class="btn btn-line btn-sm" data-click="import">'+ic('ul')+'<span>読み込み</span></button>';
  html+='<button class="btn btn-dark btn-sm" data-click="export">'+ic('dl')+'<span>書き出し</span></button>';
  html+='</div></div></div>';
@@ -429,13 +429,8 @@ function viewList(){
  var todays=active.filter(function(c){if(c.planDate===tIso)return true;var D=parseDate(c.deadline);if(D&&(D<t||fmtISO(D)===tIso))return true;return isUrgent(c);})
    .sort(function(a,b){return (quadRank(a)-quadRank(b))||byDeadline(a,b);});
  var h='';
- // toolbar
- h+='<div class="row gap2 wrapf center mb3">';
- h+='<button class="btn btn-outline" data-click="slide">'+ic('img')+'<span>フレーム図解</span></button>';
- h+='<button class="btn btn-outline" data-click="manual">'+ic('book')+'<span>使い方マニュアル</span></button>';
- h+='<button class="btn btn-outline" data-click="sources">'+ic('book')+'<span>出典</span></button>';
- if(state.cases.some(isResearch))h+='<button class="btn btn-outline'+(_researchFilter?' on-research':'')+'" data-click="researchFilterToggle" title="リサーチタスクだけを表示">'+ic('spark',15)+'<span>'+(_researchFilter?'リサーチのみ ✓':'リサーチのみ')+'</span></button>';
- h+='</div>';
+ // toolbar（リサーチ絞り込みがある場合のみ表示）
+ if(state.cases.some(isResearch))h+='<div class="row gap2 wrapf center mb3"><button class="btn btn-outline'+(_researchFilter?' on-research':'')+'" data-click="researchFilterToggle" title="リサーチタスクだけを表示">'+ic('spark',15)+'<span>'+(_researchFilter?'リサーチのみ ✓':'リサーチのみ')+'</span></button></div>';
  // greeting
  var doing=active.filter(function(c){return (c.taskStatus||'todo')==='doing';}).length;
  var urg=active.filter(isUrgent).length;
