@@ -755,7 +755,6 @@ function viewReport(c){
  var h='<div class="no-print" style="position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid var(--line)"><div class="wrap row between" style="padding:12px 16px;max-width:720px"><button class="btn-ghost" data-click="reportBack">'+ic('aL')+'<span>編集に戻る</span></button><button class="btn btn-brand" data-click="print">'+ic('print',15)+'<span>印刷 / PDF保存</span></button></div></div>';
  h+='<div class="wrap" style="max-width:820px;padding:24px 16px"><div class="rpt">';
  h+='<div class="row between" style="align-items:flex-end;border-bottom:2px solid var(--brand);padding-bottom:8px"><div><div style="font-size:18px;font-weight:700">'+esc(c.title||"（無題の案件）")+'</div><div class="xsmall muted">依頼者：'+esc(c.requester||"—")+'　／　締切：'+esc(c.deadline||"—")+'</div></div><div class="xsmall muted" style="text-align:right">ロ→サ→T→ス→作→ア レポート<br>'+new Date().toLocaleDateString("ja-JP")+'</div></div>';
- if(c.requestMemo)h+='<p class="xsmall muted" style="margin-top:6px">依頼内容メモ：'+esc(c.requestMemo)+'</p>';
  h+='<h3>ロ：論点</h3><p class="small">'+esc(c.ronten.text||"—")+'</p>';
  h+='<h3>サ：サブ論点</h3>';
  if((c.subRonten||[]).length===0)h+='<p class="small muted">—</p>';else{h+='<div class="small">';(c.subRonten||[]).forEach(function(s,i){h+='<div><b>サ'+(i+1)+'.</b> '+esc(s.text||"—")+'</div>';(s.children||[]).forEach(function(ch){if(ch.text)h+='<div style="padding-left:16px;color:#475569">└ '+esc(ch.text)+'</div>';});});h+='</div>';}
